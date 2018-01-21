@@ -158,7 +158,7 @@ def get_folder_name(combination):
             mesh.append(cur_mesh)
 
         # If a grid file is in the combination
-        elif (elem[0:4] == "grid"):
+        elif elem[0:4] == "grid":
             # Remove .grd .nc and =
             cur_grid = elem.replace(".grd", "")
             cur_grid = cur_grid.replace(".nc", "")
@@ -184,7 +184,7 @@ def get_folder_name(combination):
             # If the dir_derivative_set was not set, the only
             # possibility left is that the element is an
             # "additional" option
-            if not (dir_derivative_set):
+            if not dir_derivative_set:
                 # Replace ":" and "=" and append it to the
                 # additional folder
                 cur_additional = elem.replace(":", "_")
@@ -673,7 +673,7 @@ class basic_runner(object):
                     (type(self._additional) == str) or \
                     (type(self._additional) == dict):
                 # Put additional as a double iterable
-                self._additional = ((self._additional),)
+                self._additional = (self._additional,)
             else:
                 if not (hasattr(self._additional[0], "__iter__")) or \
                         (type(self._additional[0]) == str) or \
@@ -686,7 +686,7 @@ class basic_runner(object):
                     (type(self._series_add) == str) or \
                     (type(self._series_add) == dict):
                 # Put series_add as a double iterable
-                self._series_add = ((self._series_add),)
+                self._series_add = (self._series_add,)
             else:
                 if not (hasattr(self._series_add[0], "__iter__")) or \
                         (type(self._series_add[0]) == str) or \
@@ -776,7 +776,7 @@ class basic_runner(object):
             for warning in self._warnings:
                 print(warning + "\n")
             print("{}{}".format("-" * 80, "\n" * 3))
-        elif len(self._warnings) > 0 and not (error_occured):
+        elif len(self._warnings) > 0 and not error_occured:
             print("{} {}".format("\n" * 3, "~" * 69))
             print(("| No WARNINGS detected before instance destruction in "
                    "'bout_runners'. |"))
@@ -873,7 +873,7 @@ class basic_runner(object):
         # If we are not running the post processing function after every
         # run, make an appendable list over all the runs which will be
         # passed as an input parameter to the post processing function
-        if not (post_process_after_every_run):
+        if not post_process_after_every_run:
             seq_of_dmp_folders = []
 
         # Print either "now running" or "now submitting"
@@ -882,7 +882,7 @@ class basic_runner(object):
         # Set self._len_group if post_processing_function is set, but
         # self._sort_by is None
         if (post_processing_function is not None) and \
-                (not (post_process_after_every_run)) and \
+                (not post_process_after_every_run) and \
                 (self._len_group is None):
             # self._len_group is to a number by _get_swapped_input_list
             # (which is called if self._sort_by is not None)
@@ -896,7 +896,7 @@ class basic_runner(object):
 
             # Get the folder to store the data
             do_run = self._prepare_dmp_folder(combination, **kwargs)
-            if not (do_run):
+            if not do_run:
                 # Skip this run
                 continue
 
@@ -905,7 +905,7 @@ class basic_runner(object):
                 self._remove_data()
 
             # Copy the grid (if any) if cpy_grid files is True
-            if (self._cpy_grid) and (self._grid_file is not None):
+            if self._cpy_grid and (self._grid_file is not None):
                 combination_list = combination.split()
                 # Loop through all the combinations
                 for elem in combination_list:
@@ -935,7 +935,7 @@ class basic_runner(object):
                     # Append the dmp folder to the list of dmp folders
                     seq_of_dmp_folders.append(self._dmp_folder)
                     # If the run_no+1 is divisible by self._len_group
-                    if ((run_no + 1) % self._len_group == 0):
+                    if (run_no + 1) % self._len_group == 0:
                         # Call the post processing function
                         self._call_post_processing_function(
                             function=post_processing_function,
@@ -1007,7 +1007,7 @@ class basic_runner(object):
             the *.o file.
         """
 
-        if prog_name is not (None):
+        if prog_name is not None:
             # Check that a string is given
             if type(prog_name) != str:
                 message = "prog_name must be given as a string"
@@ -1150,7 +1150,7 @@ class basic_runner(object):
                     # Only one grid file
                     if self._grid_file[0:len(start_name)] != start_name:
                         success = False
-                if not (success):
+                if not success:
                     message = ("The name of the grid file must start with"
                                " 'grid_file' in order to sort by them.")
                     self._errors.append("RuntimeError")
@@ -1458,7 +1458,7 @@ class basic_runner(object):
                 message = ("redistribute is not None and restart = 'append' is"
                            " currently incompatible, setting restart to"
                            " 'overwrite'")
-                if not (self._restart_from):
+                if not self._restart_from:
                     message += " (previous files will be saved)"
                 warning_printer(message)
                 self._warnings.append(message)
@@ -1503,7 +1503,7 @@ class basic_runner(object):
             if type(self._add_noise) == dict:
                 for var, scale in self._add_noise.items():
                     if type(var) != str:
-                        if var is not (None):
+                        if var is not None:
                             raise_error = True
                             break
                         else:
@@ -1634,7 +1634,7 @@ class basic_runner(object):
             self._errors.append("TypeError")
             message = "dz and zmin or zmax cannot be set simultaneously."
             raise TypeError(message)
-        elif (self._zperiod is not None and self._dz):
+        elif self._zperiod is not None and self._dz:
             self._errors.append("TypeError")
             message = "dz and zperiod cannot be set simultaneously."
             raise TypeError(message)
@@ -1788,7 +1788,7 @@ class basic_runner(object):
                 # elem is not iterable or is a dict or a string
                 else:
                     success = False
-            if not (success):
+            if not success:
                 message = \
                     ("{0} is on the wrong form.\n"
                      "{0} should be on the form\n"
@@ -1901,7 +1901,7 @@ class basic_runner(object):
             # Set the local ny value
             local_ny = [self._get_dim_from_input("ny")]
             # }}}
-        elif (self._nx is None):
+        elif self._nx is None:
             # {{{ Set local_nx from input
             # ny is given, so we only need to find nx
             local_ny = list(self._ny)
@@ -1912,7 +1912,7 @@ class basic_runner(object):
             # Get the same length on nx and ny
             local_nx = local_nx * len(local_ny)
             # }}}
-        elif (self._ny is None):
+        elif self._ny is None:
             # {{{ Set local_ny from input
             # nx is given, so we only need to find ny
             local_nx = list(self._nx)
@@ -2016,7 +2016,7 @@ class basic_runner(object):
         # {{{Set combination of nx, ny and nz (if not set in grid_file)
         # Appendable list
         spatial_grid_possibilities = []
-        if (self._grid_file is None):
+        if self._grid_file is None:
             # Dictionary where
             # - the first element is the variable itself
             # - the second element is the section of the variable
@@ -2408,7 +2408,7 @@ class basic_runner(object):
 
         # {{{ Save files if restart is set to "overwrite"
         # NOTE: This is already done if self._redistribute is set
-        if self._restart == "overwrite" and not (self._redistribute) and do_run:
+        if self._restart == "overwrite" and not self._redistribute and do_run:
             self._move_old_runs(folder_name="restart", include_restart=False)
         # }}}
 
@@ -2667,7 +2667,7 @@ class basic_runner(object):
                     shutil.copy2(file_name, after_resize_dir)
                 # The restart files are stored in the resize folder
                 folder = "afterResizeRedistr*"
-            elif self._restart == "overwrite" and not (self._redistribute):
+            elif self._restart == "overwrite" and not self._redistribute:
                 # The restart files are stored in the restart folder
                 folder = "restart*"
             elif self._restart == "overwrite" and self._redistribute:
@@ -2931,7 +2931,7 @@ class basic_runner(object):
                     else:
                         # Neither correct type, nor iterable
                         success = False
-                if not (success):
+                if not success:
                     message = ("{} is of wrong type\n"
                                "{} must be {}"). \
                         format(cur_var[1], the_type.__name__)
@@ -2967,7 +2967,7 @@ class basic_runner(object):
             if not (var[0] in possibilities):
                 success = False
 
-        if not (success):
+        if not success:
             message = ("{} was not set to a possible option.\n"
                        "The possibilities are \n{}"). \
                 format(var[1], "\n".join(possibilities))
@@ -3082,7 +3082,7 @@ class basic_runner(object):
             add_number = (-1) ** (abs(add_number)) * (abs(add_number) + 1)
         else:
             # If no warnings has been produced so far
-            if not (produce_warning):
+            if not produce_warning:
                 produce_warning = False
 
         return local_nx, local_ny, add_number, produce_warning
@@ -3125,9 +3125,9 @@ class basic_runner(object):
         # }}}
 
         # {{{ If the initial split did not succeed
-        if not (init_split_found):
+        if not init_split_found:
             # If modification is allowed
-            if not (self._allow_size_modification) or \
+            if not self._allow_size_modification or \
                     (self._grid_file is not None):
                 # If the split fails and the a grid file is given
                 if self._grid_file is not None:
@@ -3416,7 +3416,7 @@ class basic_runner(object):
             for cur_file in file_names:
                 shutil.move(cur_file, dst)
 
-        if not (include_restart):
+        if not include_restart:
             # We would like to save the restart files as well
             print("Copying restart files to {}\n".format(dst))
             file_names = \
@@ -4056,7 +4056,7 @@ class PBS_runner(basic_runner):
             else:
                 success = False
 
-            if not (success):
+            if not success:
                 message = walltime[1] + " must be on the form H...H:MM:SS"
                 self._errors.append("TypeError")
                 raise TypeError(message)
