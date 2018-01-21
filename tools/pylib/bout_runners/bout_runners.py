@@ -1611,7 +1611,7 @@ class basic_runner(object):
 
         # Checks if run_log exists
         self._run_log = os.path.join(self._directory, "run_log.txt")
-        if os.path.isfile(self._run_log) == False:
+        if not os.path.isfile(self._run_log):
             # The header
             header = ("start_time", "run_type", "run_no",\
                       "run_time_H:M:S", "dump_folder")
@@ -1687,7 +1687,7 @@ class basic_runner(object):
                 count = 0
 
                 #{{{While cur_split_found == False
-                while cur_split_found == False:
+                while not cur_split_found:
                     # The same check as below is performed internally in
                     # BOUT++ (see boutmesh.cxx under
                     # if(options->isSet("NXPE")))
@@ -2319,7 +2319,7 @@ class basic_runner(object):
                                  maxProc = self._max_proc)
                 print("\n")
 
-                if success == False:
+                if not success:
                     do_run = False
                     if self._cur_restart_from:
                         print("Something went wrong: Reomving {}\n".\
@@ -2462,7 +2462,7 @@ class basic_runner(object):
                                      output = self._dmp_folder)
                     print("\n")
 
-                    if success == False:
+                    if not success:
                         do_run = False
                         if self._cur_restart_from:
                             print("Something went wrong: Reomving {}\n".\
@@ -2659,7 +2659,7 @@ class basic_runner(object):
             # and that the default value from BOUT.inp will be used
             if cur_var[0] is not None:
                 # Check for the correct type
-                if isinstance(cur_var[0], the_type) == False:
+                if not isinstance(cur_var[0], the_type):
                     # Check if it is an iterable if iterables are
                     # allowed
                     if allow_iterable and\
@@ -2667,7 +2667,7 @@ class basic_runner(object):
                        type(cur_var[0]) != dict:
                         for elem in cur_var[0]:
                             # Check for the correct type
-                            if isinstance(elem, the_type) == False:
+                            if not isinstance(elem, the_type):
                                 success = False
                     else:
                         # Neither correct type, nor iterable
@@ -2797,7 +2797,7 @@ class basic_runner(object):
         #}}}
 
         # If the value tried is not a good value
-        if cur_split_found == False:
+        if not cur_split_found:
             # Produce a warning
             produce_warning = True
             if using_nx:
@@ -2966,7 +2966,7 @@ class basic_runner(object):
             count = 0
 
             #{{{While cur_split_found == False
-            while cur_split_found == False:
+            while not cur_split_found:
                 # The same check as below is performed internally in
                 # BOUT++ (see boutmesh.cxx under
                 # if((MX % NXPE) != 0)
@@ -3216,7 +3216,7 @@ class basic_runner(object):
                     # Set the flag that the string is found
                     found_string = True
             # If type was found
-            if found_string != False:
+            if found_string:
                 # Swap the elements in the solver
                 solver[sort_this[1]], solver[swap_nr] =\
                         solver[swap_nr], solver[sort_this[1]]
