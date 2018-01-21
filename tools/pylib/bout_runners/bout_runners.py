@@ -7,7 +7,6 @@ BOUT++ for more info. Examples can be found in
 BOUT/examples/bout_runners_example.
 """
 
-
 import os
 import sys
 import re
@@ -24,7 +23,6 @@ from boututils.options import BOUTOptions
 from boututils.datafile import DataFile
 from boutdata.restart import redistribute, addnoise, resizeZ, resize
 
-
 # NOTE: This document uses folding. A hash-symbol followed by three {'s
 #       denotes the start of a fold, and a hash-symbol followed by three
 #       }'s denotes the end of a fold
@@ -37,7 +35,6 @@ from boutdata.restart import redistribute, addnoise, resizeZ, resize
 __authors__ = "Michael Loeiten"
 __version__ = "1.071"
 __date__ = "2017.04.18"
-
 
 
 # {{{class basic_runner
@@ -74,25 +71,25 @@ def get_folder_name(combination):
         # Open (and automatically close) the grid files
         f = DataFile(cur_grid)
         # Search for mesh types in the grid file
-        mesh_types = ( \
-            ("mesh:", "nx"), \
-            ("mesh:", "ny"), \
-            ("mesh:", "nz"), \
-            ("mesh:", "zperiod"), \
-            ("mesh:", "zmin"), \
-            ("mesh:", "zmax"), \
-            ("mesh:", "dx"), \
-            ("mesh:", "dy"), \
-            ("mesh:", "dz"), \
-            ("mesh:", "ixseps1"), \
-            ("mesh:", "ixseps2"), \
-            ("mesh:", "jyseps1_1"), \
-            ("mesh:", "jyseps1_2"), \
-            ("mesh:", "jyseps2_1"), \
-            ("mesh:", "jyseps2_2"), \
-            ("", "MXG"), \
-            ("", "MYG"), \
-            )
+        mesh_types = (
+            ("mesh:", "nx"),
+            ("mesh:", "ny"),
+            ("mesh:", "nz"),
+            ("mesh:", "zperiod"),
+            ("mesh:", "zmin"),
+            ("mesh:", "zmax"),
+            ("mesh:", "dx"),
+            ("mesh:", "dy"),
+            ("mesh:", "dz"),
+            ("mesh:", "ixseps1"),
+            ("mesh:", "ixseps2"),
+            ("mesh:", "jyseps1_1"),
+            ("mesh:", "jyseps1_2"),
+            ("mesh:", "jyseps2_1"),
+            ("mesh:", "jyseps2_2"),
+            ("", "MXG"),
+            ("", "MYG"),
+        )
         for mesh_type in mesh_types:
             grid_variable = f.read(mesh_type[1])
             # If the variable is found
@@ -102,8 +99,8 @@ def get_folder_name(combination):
                     grid_variable = \
                         "{:.2e}".format(grid_variable.flatten()[0])
                 # Append it to the combinations list
-                combination.append("{}{}={}".format(mesh_type[0], \
-                                                    mesh_type[1], \
+                combination.append("{}{}={}".format(mesh_type[0],
+                                                    mesh_type[1],
                                                     grid_variable))
     # }}}
 
@@ -204,11 +201,11 @@ def get_folder_name(combination):
     solver.sort()
     # {{{ Manual sort solver
     # We want "type" to be first, and "atol" and "rtol" to be last
-    sort_these = ( \
-        ("type", 0), \
-        ("atol", -1), \
-        ("rtol", -1) \
-        )
+    sort_these = (
+        ("type", 0),
+        ("atol", -1),
+        ("rtol", -1)
+    )
     # Loop through everything we want to sort
     for sort_this in sort_these:
         # Flag to check if found
@@ -239,17 +236,17 @@ def get_folder_name(combination):
     grid_file = ("_".join(grid_file),)
 
     # Put all the folders into the combination_folder
-    combination_folder = ( \
-        solver, \
-        method, \
-        nout_timestep, \
-        mesh, \
-        additional, \
-        grid_file \
-        )
+    combination_folder = (
+        solver,
+        method,
+        nout_timestep,
+        mesh,
+        additional,
+        grid_file
+    )
     # We access the zeroth element (if given) as the folders are
     # given as a sequence
-    combination_folder = tuple(folder[0] for folder in combination_folder \
+    combination_folder = tuple(folder[0] for folder in combination_folder
                                if (len(folder) != 0) and not ("" in folder))
 
     # Make the combination folder as a string
@@ -329,63 +326,63 @@ class basic_runner(object):
     # }}}
 
     # {{{__init__
-    def __init__(self, \
-                 nproc=1, \
-                 directory="data", \
-                 prog_name=None, \
-                 solver=None, \
-                 mms=None, \
-                 atol=None, \
-                 rtol=None, \
-                 mxstep=None, \
-                 grid_file=None, \
-                 nx=None, \
-                 ny=None, \
-                 nz=None, \
-                 zperiod=None, \
-                 zmin=None, \
-                 zmax=None, \
-                 dx=None, \
-                 dy=None, \
-                 dz=None, \
-                 MXG=None, \
-                 MYG=None, \
-                 NXPE=None, \
-                 ixseps1=None, \
-                 ixseps2=None, \
-                 jyseps1_1=None, \
-                 jyseps1_2=None, \
-                 jyseps2_1=None, \
-                 jyseps2_2=None, \
-                 symGlobX=None, \
-                 symGlobY=None, \
-                 ddx_first=None, \
-                 ddx_second=None, \
-                 ddx_upwind=None, \
-                 ddx_flux=None, \
-                 ddy_first=None, \
-                 ddy_second=None, \
-                 ddy_upwind=None, \
-                 ddy_flux=None, \
-                 ddz_first=None, \
-                 ddz_second=None, \
-                 ddz_upwind=None, \
-                 ddz_flux=None, \
-                 nout=None, \
-                 timestep=None, \
-                 additional=None, \
-                 series_add=None, \
-                 restart=None, \
-                 restart_from=None, \
-                 redistribute=None, \
-                 use_expand=False, \
-                 max_proc=None, \
-                 intrp_method=None, \
-                 add_noise=None, \
-                 cpy_source=None, \
-                 cpy_grid=None, \
-                 sort_by=None, \
-                 make=None, \
+    def __init__(self,
+                 nproc=1,
+                 directory="data",
+                 prog_name=None,
+                 solver=None,
+                 mms=None,
+                 atol=None,
+                 rtol=None,
+                 mxstep=None,
+                 grid_file=None,
+                 nx=None,
+                 ny=None,
+                 nz=None,
+                 zperiod=None,
+                 zmin=None,
+                 zmax=None,
+                 dx=None,
+                 dy=None,
+                 dz=None,
+                 MXG=None,
+                 MYG=None,
+                 NXPE=None,
+                 ixseps1=None,
+                 ixseps2=None,
+                 jyseps1_1=None,
+                 jyseps1_2=None,
+                 jyseps2_1=None,
+                 jyseps2_2=None,
+                 symGlobX=None,
+                 symGlobY=None,
+                 ddx_first=None,
+                 ddx_second=None,
+                 ddx_upwind=None,
+                 ddx_flux=None,
+                 ddy_first=None,
+                 ddy_second=None,
+                 ddy_upwind=None,
+                 ddy_flux=None,
+                 ddz_first=None,
+                 ddz_second=None,
+                 ddz_upwind=None,
+                 ddz_flux=None,
+                 nout=None,
+                 timestep=None,
+                 additional=None,
+                 series_add=None,
+                 restart=None,
+                 restart_from=None,
+                 redistribute=None,
+                 use_expand=False,
+                 max_proc=None,
+                 intrp_method=None,
+                 add_noise=None,
+                 cpy_source=None,
+                 cpy_grid=None,
+                 sort_by=None,
+                 make=None,
                  allow_size_modification=False):
         # {{{docstring
         """
@@ -699,7 +696,7 @@ class basic_runner(object):
 
         # Check that nproc is given correctly
         if type(self._nproc) != int:
-            message = ("nproc is of wrong type\n" \
+            message = ("nproc is of wrong type\n"
                        "nproc must be given as an int")
             self._errors.append("TypeError")
             raise TypeError(message)
@@ -710,11 +707,11 @@ class basic_runner(object):
             self._NYPE = []
 
             # Check that NXPE is of correct type
-            check_if_int = ( \
-                (self._NXPE, "NXPE"), \
-                )
-            self._check_for_correct_type(var=check_if_int, \
-                                         the_type=int, \
+            check_if_int = (
+                (self._NXPE, "NXPE"),
+            )
+            self._check_for_correct_type(var=check_if_int,
+                                         the_type=int,
                                          allow_iterable=True)
 
             # Check that NXPE and nproc is consistent
@@ -740,10 +737,10 @@ class basic_runner(object):
         # Object initialization
         self._inputFileOpts = BOUTOptions(self._directory)
         # Convert indices to lowercase
-        self._inputFileOpts.root = dict((key.lower(), value) \
+        self._inputFileOpts.root = dict((key.lower(), value)
                                         for key, value in
                                         self._inputFileOpts.root.items())
-        self._inputFileOpts.mesh = dict((key.lower(), value) \
+        self._inputFileOpts.mesh = dict((key.lower(), value)
                                         for key, value in
                                         self._inputFileOpts.mesh.items())
 
@@ -769,11 +766,11 @@ class basic_runner(object):
             # Find the boarder length
             len_boarder = len(message)
             # Print the message
-            print("{0}{1}\n{2}\n{1}{0}". \
+            print("{0}{1}\n{2}\n{1}{0}".
                   format("\n" * 2, "!" * len_boarder, message))
             error_occured = True
         if len(self._warnings) > 0:
-            print("{}The following WARNINGS were detected:\n{}". \
+            print("{}The following WARNINGS were detected:\n{}".
                   format("\n" * 3, "-" * 80))
             for warning in self._warnings:
                 print(warning + "\n")
@@ -786,11 +783,11 @@ class basic_runner(object):
     # }}}
 
     # {{{execute_runs
-    def execute_runs(self, \
-                     job_dependencies=None, \
-                     remove_old=False, \
-                     post_processing_function=None, \
-                     post_process_after_every_run=True, \
+    def execute_runs(self,
+                     job_dependencies=None,
+                     remove_old=False,
+                     post_processing_function=None,
+                     post_process_after_every_run=True,
                      **kwargs):
         # {{{docstring
         """
@@ -831,19 +828,19 @@ class basic_runner(object):
             # Wait for jobs to finish
             if job_dependencies is not None:
                 # Ensure that job_dependencies are just numbers
-                job_dependencies = [int(re.match('\d+', j).group(0)) \
-                                    for j in job_dependencies \
+                job_dependencies = [int(re.match('\d+', j).group(0))
+                                    for j in job_dependencies
                                     if re.match('\d+', j) is not None]
                 if len(job_dependencies) != 0:
-                    print("\nWill now wait for these jobs to finish\n{}\n". \
+                    print("\nWill now wait for these jobs to finish\n{}\n".
                           format("\n".join([str(j) for j in job_dependencies])))
                 while len(job_dependencies) > 0:
                     # Get current jobs
                     status, output = shell("qstat", pipe=True)
                     job_queue = output.split("\n")
                     # Find the jobIds
-                    job_queue = [int(re.match('\d+', j).group(0)) \
-                                 for j in job_queue \
+                    job_queue = [int(re.match('\d+', j).group(0))
+                                 for j in job_queue
                                  if re.match('\d+', j) is not None]
                     # These jobs will be removed from job_dependencies
                     pop_jobs = []
@@ -857,8 +854,8 @@ class basic_runner(object):
                     time.sleep(60)
 
         # Check for errors in the run function
-        self._error_check_for_run_input(remove_old, \
-                                        post_processing_function, \
+        self._error_check_for_run_input(remove_old,
+                                        post_processing_function,
                                         post_process_after_every_run)
 
         # Create the run log
@@ -929,9 +926,9 @@ class basic_runner(object):
             if post_processing_function is not None:
                 if post_process_after_every_run:
                     # Call the post processing function
-                    self._call_post_processing_function( \
-                        function=post_processing_function, \
-                        folders=(self._dmp_folder,), \
+                    self._call_post_processing_function(
+                        function=post_processing_function,
+                        folders=(self._dmp_folder,),
                         **kwargs)
                 else:
                     # Append the dmp folder to the list of dmp folders
@@ -939,9 +936,9 @@ class basic_runner(object):
                     # If the run_no+1 is divisible by self._len_group
                     if ((run_no + 1) % self._len_group == 0):
                         # Call the post processing function
-                        self._call_post_processing_function( \
-                            function=post_processing_function, \
-                            folders=tuple(seq_of_dmp_folders), \
+                        self._call_post_processing_function(
+                            function=post_processing_function,
+                            folders=tuple(seq_of_dmp_folders),
                             **kwargs)
                         # Reset the seq_of_dmp_folders
                         seq_of_dmp_folders = []
@@ -1026,7 +1023,7 @@ class basic_runner(object):
                 self._make = False
                 # Search for file
                 if not (os.path.isfile(prog_name)):
-                    message = ("{} could not be found after make. " \
+                    message = ("{} could not be found after make. "
                                "Please check for spelling mistakes"). \
                         format(prog_name)
                     self._errors.append("RuntimeError")
@@ -1037,8 +1034,8 @@ class basic_runner(object):
             # Find the *.o file
             o_files = glob.glob("*.o")
             if len(o_files) > 1:
-                message = ("More than one *.o file found. " \
-                           "The first *.o file is chosen. " \
+                message = ("More than one *.o file found. "
+                           "The first *.o file is chosen. "
                            "Consider setting 'prog_name'.")
                 warning_printer(message)
                 self._warnings.append(message)
@@ -1060,13 +1057,13 @@ class basic_runner(object):
                         self._program_name = o_files[0].replace(".o", "")
                     else:
                         self._program_name = False
-                        message = ("The constructor could not make your" \
+                        message = ("The constructor could not make your"
                                    " program")
                         self._errors.append("RuntimeError")
                         raise RuntimeError(message)
                 else:
                     self._errors.append("RuntimeError")
-                    raise RuntimeError( \
+                    raise RuntimeError(
                         "No make file found in current directory")
 
     # }}}
@@ -1077,7 +1074,7 @@ class basic_runner(object):
 
         # {{{Check if nproc has the correct type
         if type(self._nproc) != int:
-            message = ("nproc is of wrong type\n" \
+            message = ("nproc is of wrong type\n"
                        "nproc must be given as an int")
             self._errors.append("TypeError")
             raise TypeError(message)
@@ -1085,7 +1082,7 @@ class basic_runner(object):
 
         # {{{Check if directory has the correct type
         if type(self._directory) != str:
-            message = ("directory is of wrong type\n" \
+            message = ("directory is of wrong type\n"
                        "directory must be given as a str")
             self._errors.append("TypeError")
             raise TypeError(message)
@@ -1097,12 +1094,12 @@ class basic_runner(object):
         # iterable, as MXG is used to find the correct split, and
         # because it in principle could be incompatible with the method
         # (first, second etc.) used
-        check_if_int = ( \
-            (self._MXG, "MXG"), \
-            (self._MYG, "MYG"), \
-            )
-        self._check_for_correct_type(var=check_if_int, \
-                                     the_type=int, \
+        check_if_int = (
+            (self._MXG, "MXG"),
+            (self._MYG, "MYG"),
+        )
+        self._check_for_correct_type(var=check_if_int,
+                                     the_type=int,
                                      allow_iterable=False)
         # }}}
 
@@ -1111,7 +1108,7 @@ class basic_runner(object):
         inp_file = glob.glob(os.path.join(self._directory, "BOUT.inp"))
         if len(inp_file) == 0:
             self._errors.append("RuntimeError")
-            raise RuntimeError("No BOUT.inp files found in '{}'". \
+            raise RuntimeError("No BOUT.inp files found in '{}'".
                                format(self._directory))
         # }}}
 
@@ -1134,7 +1131,7 @@ class basic_runner(object):
                     if len(grid_file) == 0:
                         not_found.append(elem)
             if len(not_found) > 0:
-                message = ("The following grid files were not found\n" \
+                message = ("The following grid files were not found\n"
                            "{}".format("\n".join(not_found)))
                 self._errors.append("RuntimeError")
                 raise RuntimeError(message)
@@ -1153,7 +1150,7 @@ class basic_runner(object):
                     if self._grid_file[0:len(start_name)] != start_name:
                         success = False
                 if not (success):
-                    message = ("The name of the grid file must start with" \
+                    message = ("The name of the grid file must start with"
                                " 'grid_file' in order to sort by them.")
                     self._errors.append("RuntimeError")
                     raise RuntimeError(message)
@@ -1161,170 +1158,170 @@ class basic_runner(object):
         # }}}
 
         # {{{Check nx, ny, nz, zperiod, nout, mxstep, separatrix are int/iterable
-        check_if_int = ( \
-            (self._nx, "nx"), \
-            (self._ny, "ny"), \
-            (self._nz, "nz"), \
-            (self._zperiod, "zperiod"), \
-            (self._nout, "nout"), \
-            (self._mxstep, "mxstep"), \
-            (self._ixseps1, "ixseps1"), \
-            (self._ixseps2, "ixseps2"), \
-            (self._jyseps1_1, "jyseps1_1"), \
-            (self._jyseps1_2, "jyseps1_2"), \
-            (self._jyseps2_1, "jyseps2_1"), \
-            (self._jyseps2_2, "jyseps2_2"), \
-            )
+        check_if_int = (
+            (self._nx, "nx"),
+            (self._ny, "ny"),
+            (self._nz, "nz"),
+            (self._zperiod, "zperiod"),
+            (self._nout, "nout"),
+            (self._mxstep, "mxstep"),
+            (self._ixseps1, "ixseps1"),
+            (self._ixseps2, "ixseps2"),
+            (self._jyseps1_1, "jyseps1_1"),
+            (self._jyseps1_2, "jyseps1_2"),
+            (self._jyseps2_1, "jyseps2_1"),
+            (self._jyseps2_2, "jyseps2_2"),
+        )
 
-        self._check_for_correct_type(var=check_if_int, \
-                                     the_type=int, \
+        self._check_for_correct_type(var=check_if_int,
+                                     the_type=int,
                                      allow_iterable=True)
         # }}}
 
         # {{{Check timestep, atol, rtol, zmin/max, dx, dy, dz is Number/iterable
         # Check if the following is a number
-        check_if_number = ( \
-            (self._timestep, "timestep"), \
-            (self._zmin, "zmin"), \
-            (self._zmax, "zmax"), \
-            (self._dx, "dx"), \
-            (self._dy, "dy"), \
-            (self._dz, "dz"), \
-            (self._atol, "atol"), \
-            (self._rtol, "rtol") \
-            )
+        check_if_number = (
+            (self._timestep, "timestep"),
+            (self._zmin, "zmin"),
+            (self._zmax, "zmax"),
+            (self._dx, "dx"),
+            (self._dy, "dy"),
+            (self._dz, "dz"),
+            (self._atol, "atol"),
+            (self._rtol, "rtol")
+        )
 
-        self._check_for_correct_type(var=check_if_number, \
-                                     the_type=Number, \
+        self._check_for_correct_type(var=check_if_number,
+                                     the_type=Number,
                                      allow_iterable=True)
         # }}}
 
         # {{{Check if solver, grid_file, methods and sort_by is str/tuple of str
         # Check if instance is string, or an iterable containing strings
-        check_if_string = ( \
-            (self._solver, "solver"), \
-            (self._grid_file, "grid_file"), \
-            (self._ddx_first, "ddx_first"), \
-            (self._ddx_second, "ddx_second"), \
-            (self._ddx_upwind, "ddx_upwind"), \
-            (self._ddx_flux, "ddx_flux"), \
-            (self._ddy_first, "ddy_first"), \
-            (self._ddy_second, "ddy_second"), \
-            (self._ddy_upwind, "ddy_upwind"), \
-            (self._ddy_flux, "ddy_flux"), \
-            (self._ddz_first, "ddz_first"), \
-            (self._ddz_second, "ddz_second"), \
-            (self._ddz_upwind, "ddz_upwind"), \
-            (self._ddz_flux, "ddz_flux"), \
-            (self._sort_by, "sort_by") \
-            )
+        check_if_string = (
+            (self._solver, "solver"),
+            (self._grid_file, "grid_file"),
+            (self._ddx_first, "ddx_first"),
+            (self._ddx_second, "ddx_second"),
+            (self._ddx_upwind, "ddx_upwind"),
+            (self._ddx_flux, "ddx_flux"),
+            (self._ddy_first, "ddy_first"),
+            (self._ddy_second, "ddy_second"),
+            (self._ddy_upwind, "ddy_upwind"),
+            (self._ddy_flux, "ddy_flux"),
+            (self._ddz_first, "ddz_first"),
+            (self._ddz_second, "ddz_second"),
+            (self._ddz_upwind, "ddz_upwind"),
+            (self._ddz_flux, "ddz_flux"),
+            (self._sort_by, "sort_by")
+        )
 
-        self._check_for_correct_type(var=check_if_string, \
-                                     the_type=str, \
+        self._check_for_correct_type(var=check_if_string,
+                                     the_type=str,
                                      allow_iterable=True)
         # }}}
 
         # {{{Check if solver is set to the correct possibility
         # Check if the solver is possible
         # From /include/bout/solver.hxx
-        possible_solvers = ( \
-            "cvode", \
-            "pvode", \
-            "ida", \
-            "petsc", \
-            "slepc", \
-            "karniadakis", \
-            "rk4", \
-            "euler", \
-            "rk3ssp", \
-            "power", \
-            "arkode", \
-            "imexbdf2", \
-            "snes", \
-            "rkgeneric", \
-            )
+        possible_solvers = (
+            "cvode",
+            "pvode",
+            "ida",
+            "petsc",
+            "slepc",
+            "karniadakis",
+            "rk4",
+            "euler",
+            "rk3ssp",
+            "power",
+            "arkode",
+            "imexbdf2",
+            "snes",
+            "rkgeneric",
+        )
 
         # Do the check if the solver is set
         if self._solver is not None:
-            self._check_if_set_correctly(var=(self._solver, "solver"), \
+            self._check_if_set_correctly(var=(self._solver, "solver"),
                                          possibilities=possible_solvers)
         # }}}
 
         # {{{Check if the methods is set to the correct possibility
         # Check if ddx or ddy is possible
-        possible_method = [ \
-            "C2", \
-            "C4", \
-            ]
+        possible_method = [
+            "C2",
+            "C4",
+        ]
 
         # Make a tuple of the variables
-        the_vars = ( \
-            (self._ddx_first, "ddx_first"), \
-            (self._ddx_second, "ddx_second"), \
-            (self._ddy_first, "ddy_first"), \
-            (self._ddy_second, "ddy_second") \
-            )
+        the_vars = (
+            (self._ddx_first, "ddx_first"),
+            (self._ddx_second, "ddx_second"),
+            (self._ddy_first, "ddy_first"),
+            (self._ddy_second, "ddy_second")
+        )
 
         for var in the_vars:
             # Do the check if the method is set
             if var[0] is not None:
-                self._check_if_set_correctly(var=var, \
+                self._check_if_set_correctly(var=var,
                                              possibilities=possible_method)
 
         # Check if ddz is possible
         possible_method.append("FFT")
 
         # Make a tuple of the variables
-        the_vars = ( \
-            (self._ddz_first, "ddz_first"), \
-            (self._ddz_second, "ddz_second") \
-            )
+        the_vars = (
+            (self._ddz_first, "ddz_first"),
+            (self._ddz_second, "ddz_second")
+        )
 
         for var in the_vars:
             # Do the check if the method is set
             if var[0] is not None:
-                self._check_if_set_correctly(var=var, \
+                self._check_if_set_correctly(var=var,
                                              possibilities=possible_method)
 
         # Check for upwind terms
-        possible_method = ( \
-            "U1", \
-            "U2", \
-            "U4", \
-            "W2", \
-            "W3", \
-            )
+        possible_method = (
+            "U1",
+            "U2",
+            "U4",
+            "W2",
+            "W3",
+        )
 
         # Make a tuple of the variables
-        the_vars = ( \
-            (self._ddx_upwind, "ddx_upwind"), \
-            (self._ddy_upwind, "ddy_upwind"), \
-            (self._ddz_upwind, "ddz_upwind") \
-            )
+        the_vars = (
+            (self._ddx_upwind, "ddx_upwind"),
+            (self._ddy_upwind, "ddy_upwind"),
+            (self._ddz_upwind, "ddz_upwind")
+        )
 
         for var in the_vars:
             # Do the check if the method is set
             if var[0] is not None:
-                self._check_if_set_correctly(var=var, \
+                self._check_if_set_correctly(var=var,
                                              possibilities=possible_method)
 
         # Check for flux terms
-        possible_method = ( \
-            "SPLIT", \
-            "NND" \
-            )
+        possible_method = (
+            "SPLIT",
+            "NND"
+        )
 
         # Make a tuple of the variables
-        the_vars = ( \
-            (self._ddx_flux, "ddx_flux"), \
-            (self._ddy_flux, "ddy_flux"), \
-            (self._ddz_flux, "ddz_flux") \
-            )
+        the_vars = (
+            (self._ddx_flux, "ddx_flux"),
+            (self._ddy_flux, "ddy_flux"),
+            (self._ddz_flux, "ddz_flux")
+        )
 
         for var in the_vars:
             # Do the check if the method is set
             if var[0] is not None:
-                self._check_if_set_correctly(var=var, \
+                self._check_if_set_correctly(var=var,
                                              possibilities=possible_method)
         # }}}
 
@@ -1334,42 +1331,42 @@ class basic_runner(object):
 
         # Append the 1st element of sort_checks if the 0th elements of
         # sort_checks is not None
-        sort_checks = ( \
-            (self._nx, "spatial_domain"), \
-            (self._ny, "spatial_domain"), \
-            (self._nz, "spatial_domain"), \
-            (self._dx, "spatial_domain"), \
-            (self._dy, "spatial_domain"), \
-            (self._dz, "spatial_domain"), \
-            (self._ixseps1, "spatial_domain"), \
-            (self._ixseps2, "spatial_domain"), \
-            (self._jyseps1_1, "spatial_domain"), \
-            (self._jyseps1_2, "spatial_domain"), \
-            (self._jyseps2_1, "spatial_domain"), \
-            (self._jyseps2_2, "spatial_domain"), \
-            (self._symGlobX, "spatial_domain"), \
-            (self._symGlobY, "spatial_domain"), \
-            (self._timestep, "temporal_domain"), \
-            (self._nout, "temporal_domain"), \
-            (self._solver, "solver"), \
-            (self._mms, "solver"), \
-            (self._atol, "solver"), \
-            (self._rtol, "solver"), \
-            (self._mxstep, "solver"), \
-            (self._ddx_first, "ddx_first"), \
-            (self._ddx_second, "ddx_second"), \
-            (self._ddx_upwind, "ddx_upwind"), \
-            (self._ddx_flux, "ddx_flux"), \
-            (self._ddy_first, "ddy_first"), \
-            (self._ddy_second, "ddy_second"), \
-            (self._ddy_upwind, "ddy_upwind"), \
-            (self._ddy_flux, "ddy_flux"), \
-            (self._ddz_first, "ddz_first"), \
-            (self._ddz_second, "ddz_second"), \
-            (self._ddz_upwind, "ddz_upwind"), \
-            (self._ddz_flux, "ddz_flux"), \
-            (self._grid_file, "grid_file") \
-            )
+        sort_checks = (
+            (self._nx, "spatial_domain"),
+            (self._ny, "spatial_domain"),
+            (self._nz, "spatial_domain"),
+            (self._dx, "spatial_domain"),
+            (self._dy, "spatial_domain"),
+            (self._dz, "spatial_domain"),
+            (self._ixseps1, "spatial_domain"),
+            (self._ixseps2, "spatial_domain"),
+            (self._jyseps1_1, "spatial_domain"),
+            (self._jyseps1_2, "spatial_domain"),
+            (self._jyseps2_1, "spatial_domain"),
+            (self._jyseps2_2, "spatial_domain"),
+            (self._symGlobX, "spatial_domain"),
+            (self._symGlobY, "spatial_domain"),
+            (self._timestep, "temporal_domain"),
+            (self._nout, "temporal_domain"),
+            (self._solver, "solver"),
+            (self._mms, "solver"),
+            (self._atol, "solver"),
+            (self._rtol, "solver"),
+            (self._mxstep, "solver"),
+            (self._ddx_first, "ddx_first"),
+            (self._ddx_second, "ddx_second"),
+            (self._ddx_upwind, "ddx_upwind"),
+            (self._ddx_flux, "ddx_flux"),
+            (self._ddy_first, "ddy_first"),
+            (self._ddy_second, "ddy_second"),
+            (self._ddy_upwind, "ddy_upwind"),
+            (self._ddy_flux, "ddy_flux"),
+            (self._ddz_first, "ddz_first"),
+            (self._ddz_second, "ddz_second"),
+            (self._ddz_upwind, "ddz_upwind"),
+            (self._ddz_flux, "ddz_flux"),
+            (self._grid_file, "grid_file")
+        )
 
         for sort_check in sort_checks:
             if sort_check[0] is not None:
@@ -1399,14 +1396,12 @@ class basic_runner(object):
                 possible_sort_by.append(section + series_add[1])
 
         # Make a tuple of the variables
-        the_vars = ( \
-            (self._sort_by, "sort_by"), \
-            )
+        the_vars = ((self._sort_by, "sort_by"),)
 
         for var in the_vars:
             # Do the check if the method is set
             if var[0] is not None:
-                self._check_if_set_correctly(var=var, \
+                self._check_if_set_correctly(var=var,
                                              possibilities=possible_sort_by)
         # }}}
 
@@ -1416,20 +1411,20 @@ class basic_runner(object):
                 self._errors.append("TypeError")
                 raise TypeError("restart must be set as a string when set")
 
-        possible_method = ( \
-            "overwrite", \
-            "append" \
-            )
+        possible_method = (
+            "overwrite",
+            "append"
+        )
 
         # Make a tuple of the variables
-        the_vars = ( \
-            (self._restart, "restart"), \
-            )
+        the_vars = (
+            (self._restart, "restart"),
+        )
 
         for var in the_vars:
             # Do the check if the method is set
             if var[0] is not None:
-                self._check_if_set_correctly(var=var, \
+                self._check_if_set_correctly(var=var,
                                              possibilities=possible_method)
         # }}}
 
@@ -1444,7 +1439,7 @@ class basic_runner(object):
             if type(self._restart_from) != str \
                     and not (hasattr(self._restart_from, "__call__")):
                 self._errors.append("TypeError")
-                message = ("restart_from must be set as a string or a " \
+                message = ("restart_from must be set as a string or a "
                            "function returning the restart path when set")
                 raise TypeError(message)
         # }}}
@@ -1458,8 +1453,8 @@ class basic_runner(object):
                 self._warnings.append(message)
             # Throw a warning if restart is append
             elif self._restart == "append":
-                message = ("redistribute is not None and restart = 'append' is" \
-                           " currently incompatible, setting restart to" \
+                message = ("redistribute is not None and restart = 'append' is"
+                           " currently incompatible, setting restart to"
                            " 'overwrite'")
                 if not (self._restart_from):
                     message += " (previous files will be saved)"
@@ -1478,7 +1473,7 @@ class basic_runner(object):
         # {{{Check if max_proc has the correct type
         if self._restart is not None and self._max_proc is not None:
             if type(self._max_proc) != int:
-                message = ("max_proc is of wrong type\n" \
+                message = ("max_proc is of wrong type\n"
                            "max_proc must be given as an int")
                 self._errors.append("TypeError")
                 raise TypeError(message)
@@ -1487,7 +1482,7 @@ class basic_runner(object):
         # {{{Check if intrp_method has the correct type
         if self._restart is not None and self._intrp_method is not None:
             if type(self._intrp_method) != str:
-                message = ("intrp_method is of wrong type\n" \
+                message = ("intrp_method is of wrong type\n"
                            "intrp_method must be given as a string")
                 self._errors.append("TypeError")
                 raise TypeError(message)
@@ -1521,8 +1516,8 @@ class basic_runner(object):
 
             if raise_error:
                 self._errors.append("TypeError")
-                message = ("add_noise must be on the form " \
-                           "{'var1': number_or_none," \
+                message = ("add_noise must be on the form "
+                           "{'var1': number_or_none,"
                            " 'var2': number_or_none, ...}'\n"
                            "or\n"
                            "{None: number_or_none}"
@@ -1534,26 +1529,26 @@ class basic_runner(object):
         if self._grid_file is not None:
             # Check if the following variables are found in the grid
             # file
-            check_if_in_grid = ( \
-                (self._nx, "nx"), \
-                (self._ny, "ny"), \
-                (self._nz, "nz"), \
-                (self._dx, "dx"), \
-                (self._dy, "dy"), \
-                (self._dz, "dz"), \
-                (self._MXG, "MXG"), \
-                (self._MYG, "MYG"), \
-                (self._NXPE, "NXPE"), \
-                (self._NYPE, "NYPE"), \
-                (self._ixseps1, "ixseps1"), \
-                (self._ixseps2, "ixseps2"), \
-                (self._jyseps1_1, "jyseps1_1"), \
-                (self._jyseps1_2, "jyseps1_2"), \
-                (self._jyseps2_1, "jyseps2_1"), \
-                (self._jyseps2_2, "jyseps2_2"), \
-                (self._symGlobX, "symmmetricGlobalX"), \
-                (self._symGlobY, "symmmetricGlobalY") \
-                )
+            check_if_in_grid = (
+                (self._nx, "nx"),
+                (self._ny, "ny"),
+                (self._nz, "nz"),
+                (self._dx, "dx"),
+                (self._dy, "dy"),
+                (self._dz, "dz"),
+                (self._MXG, "MXG"),
+                (self._MYG, "MYG"),
+                (self._NXPE, "NXPE"),
+                (self._NYPE, "NYPE"),
+                (self._ixseps1, "ixseps1"),
+                (self._ixseps2, "ixseps2"),
+                (self._jyseps1_1, "jyseps1_1"),
+                (self._jyseps1_2, "jyseps1_2"),
+                (self._jyseps2_1, "jyseps2_1"),
+                (self._jyseps2_2, "jyseps2_2"),
+                (self._symGlobX, "symmmetricGlobalX"),
+                (self._symGlobY, "symmmetricGlobalY")
+            )
             for var in check_if_in_grid:
                 # If the variable is set
                 if var[0] is not None:
@@ -1566,10 +1561,10 @@ class basic_runner(object):
                         # If the variable is found
                         if grid_variable is not None:
                             self._errors.append("TypeError")
-                            message = ("{0} was specified both in the " \
-                                       "driver and in the grid file.\n" \
-                                       "Please remove {}" \
-                                       " from the driver if you would " \
+                            message = ("{0} was specified both in the "
+                                       "driver and in the grid file.\n"
+                                       "Please remove {}"
+                                       " from the driver if you would "
                                        "like to run with a grid file.")
                             raise TypeError(message.format(var[1]))
         # }}}
@@ -1627,12 +1622,12 @@ class basic_runner(object):
         # }}}
 
         # {{{Check (zperiod), (zmin, zmax) and (dz) is not set simultaneously
-        if (self._zperiod is not None and \
+        if (self._zperiod is not None and
                 (self._zmin is not None or self._zmax is not None)):
             self._errors.append("TypeError")
             message = "zperiod and zmin or zmax cannot be set simultaneously."
             raise TypeError(message)
-        elif (self._dz is not None and \
+        elif (self._dz is not None and
               (self._zmin is not None or self._zmax is not None)):
             self._errors.append("TypeError")
             message = "dz and zmin or zmax cannot be set simultaneously."
@@ -1647,7 +1642,7 @@ class basic_runner(object):
         # dz is currently set throught zmin and zmax
         if self._dz is not None:
             self._errors.append("TypeError")
-            message = ("dz can currently just be set through zmin and zmax\n" \
+            message = ("dz can currently just be set through zmin and zmax\n"
                        "dz = 2*pi*(zmax-zmin)/(MZ)")
             raise TypeError(message)
         # }}}
@@ -1672,7 +1667,7 @@ class basic_runner(object):
 
         # {{{ Check that timestep and nout have the same len
         if self._timestep is not None and self._nout is not None:
-            self._check_if_same_len((self._timestep, "timestep"), \
+            self._check_if_same_len((self._timestep, "timestep"),
                                     (self._nout, "nout"))
         # }}}
 
@@ -1696,7 +1691,7 @@ class basic_runner(object):
             # Collect all second indices
             third_indicies = tuple(elems[2] for elems in self._series_add)
             # Find the length of the second indices
-            lengths = tuple(len(elem) for elem in third_indicies \
+            lengths = tuple(len(elem) for elem in third_indicies
                             if (type(elem) != str and type(elem) != dict))
 
             # Check that the length of the second indices are the same
@@ -1704,7 +1699,7 @@ class basic_runner(object):
             # of value
             # stackoverflow.com/questions/3844801/check-if-all-elements-in-a-list-are-identical
             if not (lengths.count(lengths[0]) == len(lengths)):
-                message = ("The length of the third index of the elements" \
+                message = ("The length of the third index of the elements"
                            " of series_add must be the same")
                 self._errors.append("TypeError")
                 raise TypeError(message)
@@ -1712,17 +1707,17 @@ class basic_runner(object):
 
         # {{{Check mms, symGlobX, symGlobY, cpy_src/grid, use_expand and
         #   allow_size_mod is bool
-        check_if_bool = ( \
-            (self._mms, "mms"), \
-            (self._symGlobX, "symGlobX"), \
-            (self._symGlobY, "symGlobY"), \
-            (self._cpy_source, "cpy_source"), \
-            (self._cpy_grid, "cpy_grid"), \
-            (self._use_expand, "use_expand"), \
-            (self._allow_size_modification, "allow_size_modification") \
-            )
+        check_if_bool = (
+            (self._mms, "mms"),
+            (self._symGlobX, "symGlobX"),
+            (self._symGlobY, "symGlobY"),
+            (self._cpy_source, "cpy_source"),
+            (self._cpy_grid, "cpy_grid"),
+            (self._use_expand, "use_expand"),
+            (self._allow_size_modification, "allow_size_modification")
+        )
 
-        self._check_for_correct_type(var=check_if_bool, \
+        self._check_for_correct_type(var=check_if_bool,
                                      the_type=bool)
         # }}}
 
@@ -1730,14 +1725,14 @@ class basic_runner(object):
         if (self._grid_file is None) and (self._cpy_grid == True):
             # Raise error
             self._errors.append("TypeError")
-            message = ("Cannot copy the grid files if none exists in " \
+            message = ("Cannot copy the grid files if none exists in "
                        " 'grid_file'")
             raise TypeError(message)
         # }}}
 
         # {{{Check that zmin and zmax has the same length
         if (self._zmin is not None) and (self._zmax is not None):
-            self._check_if_same_len((self._zmin, "zmin"), \
+            self._check_if_same_len((self._zmin, "zmin"),
                                     (self._zmax, "zmax"))
 
         # }}}
@@ -1793,11 +1788,11 @@ class basic_runner(object):
                     success = False
             if not (success):
                 message = \
-                    ("{0} is on the wrong form.\n" \
-                     "{0} should be on the form\n" \
-                     "{0}=\ \n" \
-                     "    ((section1, name1, (value1-1, value1-2,...)),\ \n" \
-                     "     (section2, name2, (value2-1, value2-2,...)),\ \n" \
+                    ("{0} is on the wrong form.\n"
+                     "{0} should be on the form\n"
+                     "{0}=\ \n"
+                     "    ((section1, name1, (value1-1, value1-2,...)),\ \n"
+                     "     (section2, name2, (value2-1, value2-2,...)),\ \n"
                      "       ...))\n").format(input_member[1])
                 self._errors.append("TypeError")
                 raise TypeError(message)
@@ -1807,28 +1802,28 @@ class basic_runner(object):
 
     # {{{ Functions called by the execute_runs function
     # {{{_error_check_for_run_input
-    def _error_check_for_run_input(self, \
-                                   remove_old, \
-                                   post_processing_function, \
-                                   post_process_after_every_run \
+    def _error_check_for_run_input(self,
+                                   remove_old,
+                                   post_processing_function,
+                                   post_process_after_every_run
                                    ):
         """
         Check if there are any type errors in input for the run function
         """
 
         # {{{Check if remove_old is of the correct type
-        check_if_bool = ( \
-            (remove_old, "remove_old"), \
-            )
+        check_if_bool = (
+            (remove_old, "remove_old"),
+        )
 
-        self._check_for_correct_type(var=check_if_bool, \
+        self._check_for_correct_type(var=check_if_bool,
                                      the_type=bool)
         # }}}
 
         # {{{Check if remove_old and restart is set on the same time
         if remove_old == True and self._restart is not None:
             self._errors.append("RuntimeError")
-            raise RuntimeError("You should not remove old data if you" \
+            raise RuntimeError("You should not remove old data if you"
                                " want a restart run")
         # }}}
 
@@ -1836,36 +1831,35 @@ class basic_runner(object):
         if (post_processing_function is not None) and \
                 (not (hasattr(post_processing_function, "__call__"))):
             self._errors.append("RuntimeError")
-            message = ("post_process_after_every_run must be a" \
+            message = ("post_process_after_every_run must be a"
                        " function")
             raise RuntimeError(message)
         # }}}
 
         # {{{Check that the post_process_after_every_run is not set alone
         if (post_process_after_every_run is not None) and \
-                (type(post_processing_function) is None):
+            (type(post_processing_function) is None):
             self._errors.append("RuntimeError")
-            message = ("post_process_after_every_run can only be set if" \
+            message = ("post_process_after_every_run can only be set if"
                        " post_processing_function is given")
             raise RuntimeError(message)
         # }}}
 
-        # {{{Check that the post_process_after_every_run is a boolean
+       # {{{Check that the post_process_after_every_run is a boolean
         if (post_process_after_every_run is not None) and \
-                (type(post_process_after_every_run) != bool):
+            (type(post_process_after_every_run) != bool):
             self._errors.append("RuntimeError")
-            message = ("post_process_after_every_run must be set to" \
+            message = ("post_process_after_every_run must be set to"
                        " a boolean when set")
             raise RuntimeError(message)
         # }}}
 
         # Check for errors in a child class
         self._check_for_child_class_errors(
-            remove_old, \
-            post_processing_function, \
-            post_process_after_every_run \
-            )
-
+            remove_old,
+            post_processing_function,
+            post_process_after_every_run
+        )
     # }}}
 
     # {{{_create_run_log
@@ -1876,7 +1870,7 @@ class basic_runner(object):
         self._run_log = os.path.join(self._directory, "run_log.txt")
         if not os.path.isfile(self._run_log):
             # The header
-            header = ("start_time", "run_type", "run_no", \
+            header = ("start_time", "run_type", "run_no",
                       "run_time_H:M:S", "dump_folder")
             header_format = "{:<19}   {:<9}   {:<6}   {:<17}   {:<}"
             # Create the log file, and print the header
@@ -1885,6 +1879,7 @@ class basic_runner(object):
 
         # Preparation of the run
         print("\nRunning with inputs from '{}'".format(self._directory))
+
 
     # }}}
 
@@ -1940,7 +1935,7 @@ class basic_runner(object):
         if self._NXPE is None:
             # {{{ If NXPE is not set
             for size_nr in range(len(local_nx)):
-                print("Checking nx={}  and ny={}". \
+                print("Checking nx={}  and ny={}".
                       format(local_nx[size_nr], local_ny[size_nr]))
                 # Check to see if succeeded
                 init_split_found = False
@@ -1967,13 +1962,13 @@ class basic_runner(object):
                     # Check if cur_split_found is true, eventually
                     # update the add_number
                     local_nx, local_ny, add_number, produce_warning \
-                        = self._check_cur_split_found(cur_split_found, \
-                                                      produce_warning, \
-                                                      add_number, \
-                                                      size_nr, \
-                                                      local_nx, \
-                                                      local_ny, \
-                                                      using_nx=True, \
+                        = self._check_cur_split_found(cur_split_found,
+                                                      produce_warning,
+                                                      add_number,
+                                                      size_nr,
+                                                      local_nx,
+                                                      local_ny,
+                                                      using_nx=True,
                                                       using_ny=True)
 
                     # {{{ Check if the split was found the first go.
@@ -1988,25 +1983,26 @@ class basic_runner(object):
                 # }}}
 
                 # Check if initial split succeeded
-                self._check_init_split_found(init_split_found, \
-                                             size_nr, \
-                                             local_nx, \
-                                             local_ny, \
-                                             test_nx=True, \
-                                             test_ny=True, \
+                self._check_init_split_found(init_split_found,
+                                             size_nr,
+                                             local_nx,
+                                             local_ny,
+                                             test_nx=True,
+                                             test_ny=True,
                                              produce_warning=produce_warning)
             # }}}
         else:
             # {{{ If NXPE is set
             # Check if NXPE and NYPE is set consistently with nproc
-            self._check_NXPE_or_NYPE(local_nx, \
-                                     local_ny, \
-                                     type_str="NXPE", \
+            self._check_NXPE_or_NYPE(local_nx,
+                                     local_ny,
+                                     type_str="NXPE",
                                      MXG=MXG)
-            self._check_NXPE_or_NYPE(local_nx, \
-                                     local_ny, \
+            self._check_NXPE_or_NYPE(local_nx,
+                                     local_ny,
                                      type_str="NYPE")
             # }}}
+
 
     # }}}
 
@@ -2026,17 +2022,17 @@ class basic_runner(object):
             # - the first element is the variable itself
             # - the second element is the section of the variable
             # - the third element is an appendable list
-            spatial_grid_str = { \
-                "nx": (self._nx, "mesh:", []), \
-                "ny": (self._ny, "mesh:", []), \
-                "nz": (self._nz, "mesh:", []), \
-                "dx": (self._dx, "mesh:", []), \
-                "dy": (self._dy, "mesh:", []), \
-                "dz": (self._dz, "mesh:", []), \
-                "zperiod": (self._zperiod, "", []), \
-                "zmin": (self._zmin, "", []), \
-                "zmax": (self._zmax, "", []), \
-                }
+            spatial_grid_str = {
+                "nx": (self._nx, "mesh:", []),
+                "ny": (self._ny, "mesh:", []),
+                "nz": (self._nz, "mesh:", []),
+                "dx": (self._dx, "mesh:", []),
+                "dy": (self._dy, "mesh:", []),
+                "dz": (self._dz, "mesh:", []),
+                "zperiod": (self._zperiod, "", []),
+                "zmin": (self._zmin, "", []),
+                "zmax": (self._zmax, "", []),
+            }
             # Store the keys as an own variable
             keys = tuple(spatial_grid_str.keys(), )
             # Append the different dimension to the list of strings
@@ -2046,10 +2042,9 @@ class basic_runner(object):
                     # Fill the appendable list with the elements from
                     # the variable
                     for elem in spatial_grid_str[key][0]:
-                        spatial_grid_str[key][2].append( \
-                            "{}{}={}". \
-                                format(spatial_grid_str[key][1], key, elem)
-                        )
+                        spatial_grid_str[key][2].append(
+                            "{}{}={}".
+                                format(spatial_grid_str[key][1], key, elem))
 
             # The goal is to combine the these strings to one string
             # Find the largest length
@@ -2064,7 +2059,7 @@ class basic_runner(object):
             # Append this to the spatial grid possibilities as a string
             for number in range(max_len):
                 # Make a tuple
-                current_grid = tuple(spatial_grid_str[key][2][number] \
+                current_grid = tuple(spatial_grid_str[key][2][number]
                                      for key in keys)
                 # Join the strings in the list and append
                 spatial_grid_possibilities.append(" ".join(current_grid))
@@ -2093,8 +2088,8 @@ class basic_runner(object):
         # Append the temporal grid possibilities as a string
         for number in range(max_len):
             # Make a tuple
-            current_times = (timestep_str[number], \
-                             nout_str[number] \
+            current_times = (timestep_str[number],
+                             nout_str[number]
                              )
             # Join the strings in the list and append
             temporal_grid_possibilities.append(" ".join(current_times))
@@ -2111,8 +2106,8 @@ class basic_runner(object):
             # Loop through all elements and fill the dictionary
             for nr, elem in enumerate(self._series_add):
                 # Put in the sub dictionary
-                all_info[nr] = {"values": None, \
-                                "section_and_var": None, \
+                all_info[nr] = {"values": None,
+                                "section_and_var": None,
                                 "sec_var_vals": []}
                 # Fill the values
                 all_info[nr]["values"] = elem[2]
@@ -2121,9 +2116,9 @@ class basic_runner(object):
                     format(elem[0], elem[1])
                 # Fill in the combinations
                 for val in all_info[nr]["values"]:
-                    all_info[nr]["sec_var_vals"].append( \
-                        all_info[nr]["section_and_var"] + str(val) \
-                        )
+                    all_info[nr]["sec_var_vals"].append(
+                        all_info[nr]["section_and_var"] + str(val)
+                    )
 
             # Make an appendable list
             all_sec_var_vals = []
@@ -2152,38 +2147,38 @@ class basic_runner(object):
         # }}}
 
         # {{{tuple of tuple of variables to generate possibilities from
-        tuple_of_variables = [ \
-            (self._solver, "solver", "type"), \
-            (self._mms, "solver", "mms"), \
-            (self._atol, "solver", "atol"), \
-            (self._rtol, "solver", "rtol"), \
-            (self._mxstep, "solver", "mxstep"), \
-            (self._MXG, "", "MXG"), \
-            (self._MYG, "", "MYG"), \
-            (self._NXPE, "", "NXPE"), \
-            (self._NYPE, "", "NYPE"), \
-            (self._grid_file, "", "grid"), \
-            (self._ddx_first, "ddx", "first"), \
-            (self._ddx_second, "ddx", "second"), \
-            (self._ddx_upwind, "ddx", "upwind"), \
-            (self._ddx_flux, "ddx", "flux"), \
-            (self._ddy_first, "ddy", "first"), \
-            (self._ddy_second, "ddy", "second"), \
-            (self._ddy_upwind, "ddy", "upwind"), \
-            (self._ddy_flux, "ddy", "flux"), \
-            (self._ddz_first, "ddz", "first"), \
-            (self._ddz_second, "ddz", "second"), \
-            (self._ddz_upwind, "ddz", "upwind"), \
-            (self._ddz_flux, "ddz", "flux"), \
-            (self._ixseps1, "mesh", "ixseps1"), \
-            (self._ixseps2, "mesh", "ixseps2"), \
-            (self._jyseps1_1, "mesh", "jyseps1_1"), \
-            (self._jyseps1_2, "mesh", "jyseps1_2"), \
-            (self._jyseps2_1, "mesh", "jyseps2_1"), \
-            (self._jyseps2_2, "mesh", "jyseps2_2"), \
-            (self._symGlobX, "mesh", "symmetricGlobalX"), \
-            (self._symGlobY, "mesh", "symmetricGlobalY") \
-            ]
+        tuple_of_variables = [
+            (self._solver, "solver", "type"),
+            (self._mms, "solver", "mms"),
+            (self._atol, "solver", "atol"),
+            (self._rtol, "solver", "rtol"),
+            (self._mxstep, "solver", "mxstep"),
+            (self._MXG, "", "MXG"),
+            (self._MYG, "", "MYG"),
+            (self._NXPE, "", "NXPE"),
+            (self._NYPE, "", "NYPE"),
+            (self._grid_file, "", "grid"),
+            (self._ddx_first, "ddx", "first"),
+            (self._ddx_second, "ddx", "second"),
+            (self._ddx_upwind, "ddx", "upwind"),
+            (self._ddx_flux, "ddx", "flux"),
+            (self._ddy_first, "ddy", "first"),
+            (self._ddy_second, "ddy", "second"),
+            (self._ddy_upwind, "ddy", "upwind"),
+            (self._ddy_flux, "ddy", "flux"),
+            (self._ddz_first, "ddz", "first"),
+            (self._ddz_second, "ddz", "second"),
+            (self._ddz_upwind, "ddz", "upwind"),
+            (self._ddz_flux, "ddz", "flux"),
+            (self._ixseps1, "mesh", "ixseps1"),
+            (self._ixseps2, "mesh", "ixseps2"),
+            (self._jyseps1_1, "mesh", "jyseps1_1"),
+            (self._jyseps1_2, "mesh", "jyseps1_2"),
+            (self._jyseps2_1, "mesh", "jyseps2_1"),
+            (self._jyseps2_2, "mesh", "jyseps2_2"),
+            (self._symGlobX, "mesh", "symmetricGlobalX"),
+            (self._symGlobY, "mesh", "symmetricGlobalY")
+        ]
         # }}}
 
         # {{{Append the additional option to tuple of variables if set
@@ -2197,33 +2192,33 @@ class basic_runner(object):
                     # We have to specify the whole additional, as this can
                     # be given as a tuple, and tuples does not support item
                     # assignments
-                    additional = (additional[0], \
-                                  additional[1], \
+                    additional = (additional[0],
+                                  additional[1],
                                   (additional[2],))
                 # Append the additional to tuple of variables
-                tuple_of_variables.append( \
-                    (additional[2], \
-                     additional[0], \
-                     additional[1]) \
+                tuple_of_variables.append(
+                    (additional[2],
+                     additional[0],
+                     additional[1])
                     )
         # }}}
 
         # {{{List of the possibilities of the variables
         # Start out with the already generated
         # spatial_grid_possibilities and temporal_grid_possibilities
-        list_of_possibilities = [spatial_grid_possibilities, \
-                                 temporal_grid_possibilities, \
+        list_of_possibilities = [spatial_grid_possibilities,
+                                 temporal_grid_possibilities,
                                  series_add_possibilities]
 
         # Append the possibilities to the list of possibilities
         for var in tuple_of_variables:
-            list_of_possibilities.append( \
-                self._generate_possibilities(var[0], var[1], var[2]) \
-                )
+            list_of_possibilities.append(
+                self._generate_possibilities(var[0], var[1], var[2]))
         # }}}
 
         # Return the list_of possibilities
         return list_of_possibilities
+
 
     # }}}
 
@@ -2267,12 +2262,14 @@ class basic_runner(object):
 
         return all_combinations_as_strings
 
+
     # }}}
 
     # {{{_print_run_or_submit
     def _print_run_or_submit(self):
         """Prints "Now running" """
         print("\nNow running:")
+
 
     # }}}
 
@@ -2343,16 +2340,16 @@ class basic_runner(object):
                 self._cur_restart_from = \
                     self._restart_from(self._dmp_folder, **kwargs)
                 if type(self._cur_restart_from) != str:
-                    message = ("The restart_from from function must " \
+                    message = ("The restart_from from function must "
                                "return a string")
                     raise ValueError(message)
 
             # Check if any restart files are present
             # This check is performed after waiting for other runs to finish
-            if len(glob.glob( \
+            if len(glob.glob(
                     os.path.join(self._cur_restart_from, "*restart*"))) == 0:
                 self._errors.append("FileNotFoundError")
-                raise FileNotFoundError("No restart files found in " + \
+                raise FileNotFoundError("No restart files found in " +
                                         self._cur_restart_from)
 
         else:
@@ -2365,8 +2362,8 @@ class basic_runner(object):
         if len(dmp_files) == 0 and \
                 self._restart is not None and \
                 self._cur_restart_from is None:
-            message = ("'restart' was set to {}" \
-                       ", but no restart files found." \
+            message = ("'restart' was set to {}" 
+                       ", but no restart files found." 
                        " Setting 'restart' to None").format(self._restart)
             self._restart = None
             warning_printer(message)
@@ -2382,17 +2379,17 @@ class basic_runner(object):
         if self._restart and self._cur_restart_from:
             if self._redistribute:
                 # Use the redistribute function to copy the restart file
-                do_run = self._check_if_run_already_performed( \
+                do_run = self._check_if_run_already_performed(
                     restart_file_search_reason="redistribute")
 
                 if do_run:
-                    print("\nCopying files from {0} to {1}\n". \
+                    print("\nCopying files from {0} to {1}\n".
                           format(self._cur_restart_from, self._dmp_folder))
-                    do_run = redistribute(self._redistribute, \
-                                          path=self._cur_restart_from, \
-                                          output=self._dmp_folder, \
-                                          mxg=redistribute_MXG, \
-                                          myg=redistribute_MYG, \
+                    do_run = redistribute(self._redistribute,
+                                          path=self._cur_restart_from,
+                                          output=self._dmp_folder,
+                                          mxg=redistribute_MXG,
+                                          myg=redistribute_MYG,
                                           )
                     if not do_run:
                         message = "Redistribute failed, run skipped"
@@ -2404,22 +2401,21 @@ class basic_runner(object):
 
         elif self._restart and self._redistribute:
             # Save the files from previous runs
-            dst = self._move_old_runs(folder_name="redistribute", \
+            dst = self._move_old_runs(folder_name="redistribute",
                                       include_restart=True)
 
-            do_run = redistribute(self._redistribute, \
-                                  path=dst, \
-                                  output=self._dmp_folder, \
-                                  mxg=redistribute_MXG, \
-                                  myg=redistribute_MYG, \
+            do_run = redistribute(self._redistribute,
+                                  path=dst,
+                                  output=self._dmp_folder,
+                                  mxg=redistribute_MXG,
+                                  myg=redistribute_MYG,
                                   )
         # }}}
 
         # {{{ Save files if restart is set to "overwrite"
         # NOTE: This is already done if self._redistribute is set
         if self._restart == "overwrite" and not (self._redistribute) and do_run:
-            self._move_old_runs(folder_name="restart", \
-                                include_restart=False)
+            self._move_old_runs(folder_name="restart",  include_restart=False)
         # }}}
 
         # {{{Finding cur_nz
@@ -2428,9 +2424,9 @@ class basic_runner(object):
                 # The current nz should be in the second index as any
                 # eventual other names would come from additional or
                 # series_add
-                cur_nz = int(self._dmp_folder. \
-                             split("nz")[1]. \
-                             split("/")[0]. \
+                cur_nz = int(self._dmp_folder.
+                             split("nz")[1].
+                             split("/")[0].
                              replace("_", ""))
             else:
                 # The nz size is not changed, will use the one from
@@ -2467,9 +2463,9 @@ class basic_runner(object):
             # series_add
             # Finding nx
             if self._nx:
-                cur_nx = int(self._dmp_folder. \
-                             split("nx")[1]. \
-                             split("/")[0]. \
+                cur_nx = int(self._dmp_folder.
+                             split("nx")[1].
+                             split("/")[0].
                              split("_")[1])
             else:
                 # The nx size is not changed, will use the one from
@@ -2477,9 +2473,9 @@ class basic_runner(object):
                 cur_nx = self._get_dim_from_input("nx")
             # Finding ny
             if self._ny:
-                cur_ny = int(self._dmp_folder. \
-                             split("ny")[1]. \
-                             split("/")[0]. \
+                cur_ny = int(self._dmp_folder.
+                             split("ny")[1].
+                             split("/")[0].
                              split("_")[1])
             else:
                 # The ny size is not changed, will use the one from
@@ -2487,7 +2483,7 @@ class basic_runner(object):
                 cur_ny = self._get_dim_from_input("ny")
 
             # Finding the sizes in the restart files
-            file_name = glob.glob( \
+            file_name = glob.glob(
                 os.path.join(self._dmp_folder, "BOUT.restart.0.*"))[0]
 
             with DataFile(file_name) as f:
@@ -2521,13 +2517,13 @@ class basic_runner(object):
                         else:
                             call_resize = True
                             if self._restart == "append":
-                                message = ("Cannot change nx, ny and/or nz " \
+                                message = ("Cannot change nx, ny and/or nz " 
                                            "when appending\n")
                                 # Extra plane in nz
-                                message += ( \
-                                    "Requested nx = {}, nx in restart file = {}\n" \
-                                    "Requested ny = {}, ny in restart file = {}\n" \
-                                    "Requested nz = {}, nz in restart file = {}\n" \
+                                message += (
+                                    "Requested nx = {}, nx in restart file = {}\n" 
+                                    "Requested ny = {}, ny in restart file = {}\n" 
+                                    "Requested nz = {}, nz in restart file = {}\n" 
                                     "Resizing:\n"). \
                                     format(cur_nx, nx, cur_ny, ny, cur_nz, nz)
                                 raise IOError(message)
@@ -2536,24 +2532,24 @@ class basic_runner(object):
 
             if call_resize:
                 # Move runs
-                dst = self._move_old_runs(folder_name="beforeResize", \
+                dst = self._move_old_runs(folder_name="beforeResize",
                                           include_restart=True)
 
                 # Redistributing the data to one file
                 # Redistribute
-                success = redistribute(1, \
-                                       path=dst, \
-                                       output=self._dmp_folder, \
-                                       mxg=MXG, \
-                                       myg=MYG, \
+                success = redistribute(1,
+                                       path=dst,
+                                       output=self._dmp_folder,
+                                       mxg=MXG,
+                                       myg=MYG,
                                        )
                 if not success:
-                    message = ("Failed to redistribute to one file when " \
+                    message = ("Failed to redistribute to one file when " 
                                "resizing evolved variables")
                     raise RuntimeError(message)
 
                 # Move the redistributed to the resize folder
-                file_name = glob.glob(os.path.join(self._dmp_folder, \
+                file_name = glob.glob(os.path.join(self._dmp_folder,
                                                    "BOUT.restart.0.*"))[0]
                 path, name = os.path.split(file_name)
                 before_resize_dir = os.path.join(path, "beforeResizingOneFile")
@@ -2564,7 +2560,7 @@ class basic_runner(object):
                     print("\nDimension change found:\n"
                           "Requested nx = {}, nx in restart file = {}\n"
                           "Requested ny = {}, ny in restart file = {}\n"
-                          "Resizing:\n" \
+                          "Resizing:\n"
                           .format(cur_nx, nx, cur_ny, ny))
                     the_nz = nz
                 else:
@@ -2572,24 +2568,24 @@ class basic_runner(object):
                           "Requested nx = {}, nx in restart file = {}\n"
                           "Requested ny = {}, ny in restart file = {}\n"
                           "Requested nz = {}, nz in restart file = {}\n"
-                          "Resizing:\n" \
+                          "Resizing:\n"
                           .format(cur_nx, nx, cur_ny, ny, cur_nz, nz))
                     the_nz = cur_nz
 
                 # NOTE: Different definition for nx and ny
-                success = resize(cur_nx, cur_ny + 2 * MYG, the_nz, \
-                                 mxg=MXG, \
-                                 myg=MYG, \
-                                 path=before_resize_dir, \
-                                 output=self._dmp_folder, \
-                                 method=self._intrp_method, \
+                success = resize(cur_nx, cur_ny + 2 * MYG, the_nz,
+                                 mxg=MXG,
+                                 myg=MYG,
+                                 path=before_resize_dir,
+                                 output=self._dmp_folder,
+                                 method=self._intrp_method,
                                  maxProc=self._max_proc)
                 print("\n")
 
                 if not success:
                     do_run = False
                     if self._cur_restart_from:
-                        print("Something went wrong: Reomving {}\n". \
+                        print("Something went wrong: Reomving {}\n".
                               format(os.path.split(dst)[0], "\n"))
                         shutil.rmtree(os.path.split(dst)[0])
                     message = "Resize failed, skipping run."
@@ -2610,18 +2606,18 @@ class basic_runner(object):
                 else:
                     nproc = self._nproc
 
-                success = redistribute(nproc, \
-                                       path=after_resize_dir, \
-                                       output=self._dmp_folder, \
-                                       mxg=MXG, \
-                                       myg=MYG, \
+                success = redistribute(nproc,
+                                       path=after_resize_dir,
+                                       output=self._dmp_folder,
+                                       mxg=MXG,
+                                       myg=MYG,
                                        )
 
                 if not success:
-                    message = ("Failed to redistribute after " \
+                    message = ("Failed to redistribute after " 
                                "resizing evolved variables")
                     if self._cur_restart_from:
-                        print("Something went wrong: Reomving {}\n". \
+                        print("Something went wrong: Reomving {}\n".
                               format(os.path.split(dst)[0], "\n"))
                         shutil.rmtree(os.path.split(dst)[0])
                     raise RuntimeError(message)
@@ -2635,14 +2631,14 @@ class basic_runner(object):
             # The current nz should be in the second index as any
             # eventual other names would come from additional or
             # series_add
-            cur_nz = int(self._dmp_folder. \
-                         split("nz")[1]. \
-                         split("/")[0]. \
+            cur_nz = int(self._dmp_folder.
+                         split("nz")[1].
+                         split("/")[0].
                          split("_")[1])
             if self._restart == "append":
                 # Check if nz is the same as in the restart files
                 # Start by opening the 0th restart file
-                file_name = glob.glob(os.path.join(self._dmp_folder, \
+                file_name = glob.glob(os.path.join(self._dmp_folder,
                                                    "BOUT.restart.0.*"))[0]
                 with DataFile(file_name) as f:
                     # Loop over the variables in the file
@@ -2655,8 +2651,8 @@ class basic_runner(object):
                             _nx, _ny, nz = data.shape
 
                             if nz != cur_nz:
-                                message = ("Cannot change nz when appending\n" \
-                                           "nz in restart file = {}\n" \
+                                message = ("Cannot change nz when appending\n" 
+                                           "nz in restart file = {}\n" 
                                            "current run nz = {}"). \
                                     format(nz, cur_nz)
                                 raise IOError(message)
@@ -2668,7 +2664,7 @@ class basic_runner(object):
                 # Copy the files to afterResizeRedistr
                 after_resize_dir = os.path.join(path, "afterResizeRedistr")
                 create_folder(after_resize_dir)
-                file_names = glob.glob( \
+                file_names = glob.glob(
                     os.path.join(self._dmp_folder, "BOUT.restart.*"))
                 for file_name in file_names:
                     shutil.copy2(file_name, after_resize_dir)
@@ -2679,7 +2675,7 @@ class basic_runner(object):
                 folder = "restart*"
             elif self._restart == "overwrite" and self._redistribute:
                 if self._cur_restart_from:
-                    _ = self._move_old_runs(folder_name="redistribute", \
+                    _ = self._move_old_runs(folder_name="redistribute",
                                             include_restart=True)
 
                 # The restart files are stored in the restart folder
@@ -2692,7 +2688,7 @@ class basic_runner(object):
                 location = location[-1]
 
                 # Check whether nz is changing or not
-                file_name = glob.glob( \
+                file_name = glob.glob(
                     os.path.join(location, "BOUT.restart.0.*"))[0]
 
                 with DataFile(file_name) as f:
@@ -2713,27 +2709,27 @@ class basic_runner(object):
                                 else:
                                     if self._cur_restart_from:
                                         print(("Something went wrong: "
-                                               "Reomving {}\n"). \
-                                              format(
+                                               "Reomving {}\n").
+                                            format(
                                             os.path.split(location)[0]))
-                                        shutil.rmtree( \
+                                        shutil.rmtree(
                                             os.path.split(location)[0])
-                                    message = ("Cannot decrease nz from {} to" \
+                                    message = ("Cannot decrease nz from {} to" 
                                                " {} in a restart"). \
                                         format(nz, cur_nz)
                                     raise IOError(message)
 
                 if call_expand:
                     print("\nnz is bigger than in restart file, expanding:\n")
-                    success = resizeZ(cur_nz, \
-                                      path=location, \
+                    success = resizeZ(cur_nz,
+                                      path=location,
                                       output=self._dmp_folder)
                     print("\n")
 
                     if not success:
                         do_run = False
                         if self._cur_restart_from:
-                            print("Something went wrong: Reomving {}\n". \
+                            print("Something went wrong: Reomving {}\n".
                                   format(os.path.split(location)[0]))
                             shutil.rmtree(os.path.split(location)[0])
                         message = "resizeZ failed, skipping run."
@@ -2747,14 +2743,14 @@ class basic_runner(object):
             for var, scale in self._add_noise.items():
                 if scale is None:
                     scale = 1e-5
-                    print("No scale set for '{}', setting to {}\n". \
+                    print("No scale set for '{}', setting to {}\n".
                           format(var, scale))
                 try:
-                    addnoise(path=self._dmp_folder, \
-                             var=var, \
+                    addnoise(path=self._dmp_folder,
+                             var=var,
                              scale=scale)
                 except Exception as ex:
-                    print("{0}{1}addnoise failed with the following error:{0}". \
+                    print("{0}{1}addnoise failed with the following error:{0}".
                           format("\n" * 4, "!" * 3))
                     raise ex
             print("\n")
@@ -2763,7 +2759,7 @@ class basic_runner(object):
         # {{{ Copy the source files if cpy_source is True
         if self._cpy_source and do_run:
             # This will copy all C++ files to the dmp_folder
-            cpp_extension = (".cc", ".cpp", ".cxx", ".C", ".c++", \
+            cpp_extension = (".cc", ".cpp", ".cxx", ".C", ".c++",
                              ".h", ".hpp", ".hxx", ".h++")
             # Copy for all files in the extension
             for extension in cpp_extension:
@@ -2773,6 +2769,7 @@ class basic_runner(object):
         # }}}
 
         return do_run
+
 
     # }}}
 
@@ -2787,8 +2784,8 @@ class basic_runner(object):
         remove_extensions = ("dmp.*", "fail.*", "restart.*", "log.*", "cpy")
         files_to_rm = []
         for extension in remove_extensions:
-            files_to_rm.extend( \
-                glob.glob( \
+            files_to_rm.extend(
+                glob.glob(
                     os.path.join(self._dmp_folder, "*." + extension)))
 
         # Cast to set (unique values)
@@ -2797,7 +2794,7 @@ class basic_runner(object):
             os.remove(f)
 
         # Remove dirs
-        folder_to_rm = glob.glob( \
+        folder_to_rm = glob.glob(
             os.path.join(self._dmp_folder, "before_redistribution_*"))
         folder_to_rm.extend(glob.glob(os.path.join(self._dmp_folder, "run_*")))
         # Filter to only inlcude folders
@@ -2805,10 +2802,11 @@ class basic_runner(object):
         for f in folder_to_rm:
             shutil.rmtree(f)
 
+
     # }}}
 
     # {{{_check_if_run_already_performed
-    def _check_if_run_already_performed(self, \
+    def _check_if_run_already_performed(self,
                                         restart_file_search_reason=None):
         """
         Checks if the run has been run previously.
@@ -2832,8 +2830,8 @@ class basic_runner(object):
                 glob.glob(os.path.join(self._dmp_folder, "*.restart.*"))
             # Check if dmp or restart files are found
             if len(dmp_files) != 0 or len(restart_files) != 0:
-                message = ("Restart or dmp files was found in {}" \
-                           " when {}" \
+                message = ("Restart or dmp files was found in {}" 
+                           " when {}" 
                            " was set. Run skipped."). \
                     format(self._dmp_folder, restart_file_search_reason)
                 warning_printer(message)
@@ -2843,25 +2841,26 @@ class basic_runner(object):
                 return True
         # Check if dmp files are found if restart is None
         elif len(dmp_files) != 0 and self._restart is None:
-            print("Skipping the run as *.dmp.* files was found in " \
+            print("Skipping the run as *.dmp.* files was found in "
                   + self._dmp_folder)
-            print(("To overwrite old files, run with" \
+            print(("To overwrite old files, run with" 
                    " self.execute_runs(remove_old=True)\n"))
             return False
         else:
             return True
 
+
     # }}}
 
     # {{{_call_post_processing_function
-    def _call_post_processing_function( \
-            self, \
-            function=None, \
-            folders=None, \
-            **kwargs):
+    def _call_post_processing_function(self,
+                                       function=None,
+                                       folders=None,
+                                       **kwargs):
         """Function which calls the post_processing_function"""
 
         function(folders, **kwargs)
+
 
     # }}}
     # }}}
@@ -2869,10 +2868,10 @@ class basic_runner(object):
     # {{{Functions called by _error_check_for_run_input
     # {{{_check_for_child_class_errors
     def _check_for_child_class_errors(
-            self, \
-            remove_old, \
-            post_processing_function, \
-            post_process_after_every_run \
+            self,
+            remove_old,
+            post_processing_function,
+            post_process_after_every_run
             ):
         """
         Function which check for errors in a child class.
@@ -2880,6 +2879,7 @@ class basic_runner(object):
         Here a virtual function
         """
         pass
+
 
     # }}}
     # }}}
@@ -2901,14 +2901,15 @@ class basic_runner(object):
             self._errors.append("RuntimeError")
             raise RuntimeError("Error encountered during make.")
 
+
     # }}}
     # }}}
 
     # {{{ Functions called by the basic_error_checker
     # {{{_check_for_correct_type
-    def _check_for_correct_type(self, \
-                                var=None, \
-                                the_type=None, \
+    def _check_for_correct_type(self,
+                                var=None,
+                                the_type=None,
                                 allow_iterable=None):
         """
         Checks if a variable has the correct type
@@ -2946,21 +2947,22 @@ class basic_runner(object):
                         # Neither correct type, nor iterable
                         success = False
                 if not (success):
-                    message = ("{} is of wrong type\n" \
+                    message = ("{} is of wrong type\n" 
                                "{} must be {}"). \
                         format(cur_var[1], the_type.__name__)
                     if allow_iterable:
                         # If iterable is allowed, then add this
-                        message += (" or an iterable with {}" \
+                        message += (" or an iterable with {}" 
                                     " as elements.").format(the_type.__name__)
                     self._errors.append("TypeError")
                     raise TypeError(message)
 
+
     # }}}
 
     # {{{_check_if_set_correctly
-    def _check_if_set_correctly(self, \
-                                var=None, \
+    def _check_if_set_correctly(self,
+                                var=None,
                                 possibilities=None):
         """
         Check if a variable is set to a possible variable.
@@ -2983,11 +2985,12 @@ class basic_runner(object):
                 success = False
 
         if not (success):
-            message = ("{} was not set to a possible option.\n" \
+            message = ("{} was not set to a possible option.\n" 
                        "The possibilities are \n{}"). \
                 format(var[1], "\n".join(possibilities))
             self._errors.append("TypeError")
             raise TypeError(message)
+
 
     # }}}
 
@@ -3013,10 +3016,11 @@ class basic_runner(object):
             len_dim2 = 1
 
         if len_dim1 != len_dim2:
-            message = ("{} and {} must have the same" \
+            message = ("{} and {} must have the same" 
                        " length when specified").format(object1[1], object2[1])
             self._errors.append("RuntimeError")
             raise RuntimeError(message)
+
 
     # }}}
     # }}}
@@ -3024,13 +3028,13 @@ class basic_runner(object):
     # {{{ Functions called by _get_correct_domain_split
     # {{{_check_cur_split_found
     @staticmethod
-    def _check_cur_split_found(cur_split_found, \
-                               produce_warning, \
-                               add_number, \
-                               size_nr, \
-                               local_nx, \
-                               local_ny, \
-                               using_nx=None, \
+    def _check_cur_split_found(cur_split_found,
+                               produce_warning,
+                               add_number,
+                               size_nr,
+                               local_nx,
+                               local_ny,
+                               using_nx=None,
                                using_ny=None):
         # {{{docstring
         """
@@ -3070,7 +3074,7 @@ class basic_runner(object):
         produce_warning : bool
             Whether or not a warning should be produced
         """
-        # }}}
+       # }}}
 
         # If the value tried is not a good value
         if not cur_split_found:
@@ -3081,7 +3085,7 @@ class basic_runner(object):
             if using_ny:
                 local_ny[size_nr] += add_number
 
-            print("Mismatch, trying {}*{}". \
+            print("Mismatch, trying {}*{}".
                   format(local_nx[size_nr], local_ny[size_nr]))
 
             # FIXME: This is a crude approach as we are adding one to
@@ -3105,16 +3109,17 @@ class basic_runner(object):
 
         return local_nx, local_ny, add_number, produce_warning
 
+
     # }}}
 
     # {{{_check_init_split_found
-    def _check_init_split_found(self, \
-                                init_split_found, \
-                                size_nr, \
-                                local_nx, \
-                                local_ny, \
-                                test_nx=None, \
-                                test_ny=None, \
+    def _check_init_split_found(self,
+                                init_split_found,
+                                size_nr,
+                                local_nx,
+                                local_ny,
+                                test_nx=None,
+                                test_ny=None,
                                 produce_warning=None):
         # {{{docstring
         """
@@ -3151,8 +3156,8 @@ class basic_runner(object):
                 # If the split fails and the a grid file is given
                 if self._grid_file is not None:
                     self._errors.append("RuntimeError")
-                    message = ("The grid can not be split using the" \
-                               " current number of nproc.\n" \
+                    message = ("The grid can not be split using the" 
+                               " current number of nproc.\n" 
                                "Suggest using ")
                     if test_nx:
                         message += "nx = {} ".format(self._nx[size_nr])
@@ -3163,11 +3168,11 @@ class basic_runner(object):
                 # If the split fails and no grid file is given
                 else:
                     self._errors.append("RuntimeError")
-                    message = ("The grid can not be split using the" \
-                               " current number of nproc.\n" \
-                               "Setting allow_size_modification = True" \
-                               " will allow modification of the grid" \
-                               " so that it can be split with the" \
+                    message = ("The grid can not be split using the" 
+                               " current number of nproc.\n" 
+                               "Setting allow_size_modification = True" 
+                               " will allow modification of the grid" 
+                               " so that it can be split with the" 
                                " current number of nproc")
                     raise RuntimeError(message)
             else:
@@ -3194,15 +3199,16 @@ class basic_runner(object):
             self._warnings.append(message)
         # }}}
 
+
     # }}}
 
     # {{{_check_NXPE_or_NYPE
-    def _check_NXPE_or_NYPE(self, \
-                            local_nx, \
-                            local_ny, \
-                            type_str=None, \
-                            MXG=None, \
-                            produce_warning=None, \
+    def _check_NXPE_or_NYPE(self,
+                            local_nx,
+                            local_ny,
+                            type_str=None,
+                            MXG=None,
+                            produce_warning=None,
                             ):
         # {{{docstring
         """
@@ -3230,10 +3236,10 @@ class basic_runner(object):
         for size_nr in range(len(local_nx)):
             # Check the type
             if type_str == "NXPE":
-                print("Checking nx = {} with NXPE = {}". \
+                print("Checking nx = {} with NXPE = {}".
                       format(local_nx[size_nr], self._NXPE[size_nr]))
             elif type_str == "NYPE":
-                print("Checking ny = {} with NYPE = {}". \
+                print("Checking ny = {} with NYPE = {}".
                       format(local_ny[size_nr], self._NYPE[size_nr]))
             # Check to see if succeeded
             init_split_found = False
@@ -3259,13 +3265,13 @@ class basic_runner(object):
                     # Check if cur_split_found is true, eventually
                     # update the add_number
                     local_nx, local_ny, add_number, produce_warning \
-                        = self._check_cur_split_found(cur_split_found, \
-                                                      produce_warning, \
-                                                      add_number, \
-                                                      size_nr, \
-                                                      local_nx, \
-                                                      local_ny, \
-                                                      using_nx=True, \
+                        = self._check_cur_split_found(cur_split_found,
+                                                      produce_warning,
+                                                      add_number,
+                                                      size_nr,
+                                                      local_nx,
+                                                      local_ny,
+                                                      using_nx=True,
                                                       using_ny=False)
                 elif type_str == "NYPE":
                     MY = local_ny[size_nr]
@@ -3276,13 +3282,13 @@ class basic_runner(object):
                     # Check if cur_split_found is true, eventually
                     # update the add_number
                     local_nx, local_ny, add_number, produce_warning \
-                        = self._check_cur_split_found(cur_split_found, \
-                                                      produce_warning, \
-                                                      add_number, \
-                                                      size_nr, \
-                                                      local_nx, \
-                                                      local_ny, \
-                                                      using_nx=False, \
+                        = self._check_cur_split_found(cur_split_found,
+                                                      produce_warning,
+                                                      add_number,
+                                                      size_nr,
+                                                      local_nx,
+                                                      local_ny,
+                                                      using_nx=False,
                                                       using_ny=True)
 
                 # {{{ Check if the split was found the first go.
@@ -3298,21 +3304,22 @@ class basic_runner(object):
 
             # Check if initial split succeeded
             if type_str == "NXPE":
-                self._check_init_split_found(init_split_found, \
-                                             size_nr, \
-                                             local_nx, \
-                                             local_ny, \
-                                             test_nx=True, \
-                                             test_ny=False, \
+                self._check_init_split_found(init_split_found,
+                                             size_nr,
+                                             local_nx,
+                                             local_ny,
+                                             test_nx=True,
+                                             test_ny=False,
                                              produce_warning=produce_warning)
             elif type_str == "NYPE":
-                self._check_init_split_found(init_split_found, \
-                                             size_nr, \
-                                             local_nx, \
-                                             local_ny, \
-                                             test_nx=False, \
-                                             test_ny=True, \
+                self._check_init_split_found(init_split_found,
+                                             size_nr,
+                                             local_nx,
+                                             local_ny,
+                                             test_nx=False,
+                                             test_ny=True,
                                              produce_warning=produce_warning)
+
 
     # }}}
     # }}}
@@ -3326,11 +3333,11 @@ class basic_runner(object):
         """
 
         do_run = \
-            self._check_if_run_already_performed( \
+            self._check_if_run_already_performed(
                 restart_file_search_reason="restart_from")
 
         if do_run:
-            print("\nCopying files from {0} to {1}\n". \
+            print("\nCopying files from {0} to {1}\n".
                   format(self._cur_restart_from, self._dmp_folder))
 
             # Files with these extension will be given the
@@ -3341,7 +3348,7 @@ class basic_runner(object):
             has_extensions_w_cpy = ["log.*"]
 
             if self._cpy_source:
-                extensions_w_cpy.extend(["cc", "cpp", "cxx", "C", "c++", \
+                extensions_w_cpy.extend(["cc", "cpp", "cxx", "C", "c++",
                                          "h", "hpp", "hxx", "h++"])
 
             # Python 3 syntax (not python 2 friendly)
@@ -3367,7 +3374,7 @@ class basic_runner(object):
                             for ewc in extensions_w_cpy]):
                         # Add ".cpy" to the file name (without the path)
                         name = os.path.split(cur_file)[-1] + ".cpy"
-                        shutil.copy2(cur_file, \
+                        shutil.copy2(cur_file,
                                      os.path.join(self._dmp_folder, name))
                     # When the extension is not a real extension we must
                     # remove "*" in the string as shutil doesn't accept
@@ -3376,12 +3383,13 @@ class basic_runner(object):
                               for hewc in has_extensions_w_cpy]):
                         # Add ".cpy" to the file name (without the path)
                         name = os.path.split(cur_file)[-1] + ".cpy"
-                        shutil.copy2(cur_file, \
+                        shutil.copy2(cur_file,
                                      os.path.join(self._dmp_folder, name))
                     else:
                         shutil.copy2(cur_file, self._dmp_folder)
 
         return do_run
+
 
     # }}}
 
@@ -3390,14 +3398,12 @@ class basic_runner(object):
         """Move old runs, return the destination path"""
 
         # Check for folders in the dmp directory
-        directories = tuple( \
-            name for name in \
-            os.listdir(self._dmp_folder) if \
-            os.path.isdir(os.path.join( \
-                self._dmp_folder, name)) \
-            )
+        directories = tuple(
+            name for name in
+            os.listdir(self._dmp_folder) if
+            os.path.isdir(os.path.join(self._dmp_folder, name)))
         # Find occurrences of "folder_name", split, and cast result to number
-        restart_nr = tuple(int(name.split("_")[-1]) for name in directories \
+        restart_nr = tuple(int(name.split("_")[-1]) for name in directories
                            if folder_name in name)
         # Check that the sequence is not empty
         if len(restart_nr) != 0:
@@ -3413,18 +3419,18 @@ class basic_runner(object):
             # Set the restart_nr
             restart_nr = 0
         # Create the folder for the previous runs
-        create_folder(os.path.join( \
-            self._dmp_folder, \
+        create_folder(os.path.join(
+            self._dmp_folder,
             "{}_{}".format(folder_name, restart_nr)))
 
-        extensions_to_move = ["cpy", "log.*", "dmp.*", \
-                              "cc", "cpp", "cxx", "C", "c++", \
+        extensions_to_move = ["cpy", "log.*", "dmp.*",
+                              "cc", "cpp", "cxx", "C", "c++",
                               "h", "hpp", "hxx", "h++"]
 
         if include_restart:
             extensions_to_move.append("restart.*")
 
-        dst = os.path.join(self._dmp_folder, \
+        dst = os.path.join(self._dmp_folder,
                            "{}_{}".format(folder_name, restart_nr))
 
         print("Moving old runs to {}\n".format(dst))
@@ -3455,6 +3461,7 @@ class basic_runner(object):
 
         return dst
 
+
     # }}}
     # }}}
 
@@ -3470,39 +3477,39 @@ class basic_runner(object):
         tic = timeit.default_timer()
 
         # Launch the command
-        status, out = launch(command, \
-                             runcmd=self._MPIRUN, \
-                             nproc=self._nproc, \
-                             pipe=True, \
+        status, out = launch(command,
+                             runcmd=self._MPIRUN,
+                             nproc=self._nproc,
+                             pipe=True,
                              verbose=True)
 
         # If the run returns an exit code other than 0
         if status != 0:
             message = "! An error occurred. Printing the output to stdout !"
-            print("{0}{1}{2}{1}{0}{3}". \
+            print("{0}{1}{2}{1}{0}{3}".
                   format("\n", "!" * len(message), message, out))
             self._errors.append("RuntimeError")
-            message = ("An error occurred the run." \
+            message = ("An error occurred the run." 
                        " Please see the output above for details.")
             # Search if parantheses are present, but without ' or "
-            if ("(" in combination and \
-                not (re.search(r'\"(.*)\(', combination) \
+            if ("(" in combination and
+                not (re.search(r'\"(.*)\(', combination)
                      or re.search(r"\'(.*)\(", combination))) \
-                    or (")" in combination and \
+                    or (")" in combination and
                         not (re.search(r'\)(.*)\"', combination)
                              or re.search(r"\)(.*)\'", combination))):
                 message = (
-                "A '(' and/or ')' symbol seem to have appeared in the" \
-                " command line.\nIf this true, you can avoid" \
-                " this problem by adding an extra set of" \
-                " quotation marks. For example\n\n" \
-                "additional=('variable', 'bndry_xin'," \
-                " '\"dirichlet_o4(0.0)\")'\n" \
-                "rather than\n" \
-                "additional=('variable', 'bndry_xin'," \
-                " 'dirichlet_o4(0.0))'")
+                    "A '(' and/or ')' symbol seem to have appeared in the" 
+                    " command line.\nIf this true, you can avoid" 
+                    " this problem by adding an extra set of" 
+                    " quotation marks. For example\n\n" 
+                    "additional=('variable', 'bndry_xin'," 
+                    " '\"dirichlet_o4(0.0)\")'\n" 
+                    "rather than\n" 
+                    "additional=('variable', 'bndry_xin'," 
+                    " 'dirichlet_o4(0.0))'")
             else:
-                message = ("An error occurred the run." \
+                message = ("An error occurred the run." 
                            " Please see the output above for details.")
             raise RuntimeError(message)
 
@@ -3511,6 +3518,7 @@ class basic_runner(object):
         elapsed_time = toc - tic
 
         return out, elapsed_time
+
 
     # }}}
 
@@ -3522,7 +3530,7 @@ class basic_runner(object):
         run_time = str(datetime.timedelta(seconds=run_time))
 
         start_time = "{}-{}-{}-{}:{}:{}". \
-            format(start.year, start.month, start.day, \
+            format(start.year, start.month, start.day,
                    start.hour, start.minute, start.second)
 
         # If the run is restarted with initial values from the last run
@@ -3539,6 +3547,7 @@ class basic_runner(object):
         log_format = "{:<19}   {:^9}   {:^6}   {:<17}   {:<}"
         with open(self._run_log, "a") as f:
             f.write(log_format.format(*line) + "\n")
+
 
     # }}}
     # }}}
@@ -3565,6 +3574,7 @@ class basic_runner(object):
             var_possibilities = []
 
         return var_possibilities
+
 
     # }}}
     # }}}
@@ -3677,6 +3687,7 @@ class basic_runner(object):
 
         return input_list
 
+
     # }}}
     # }}}
 
@@ -3703,6 +3714,7 @@ class basic_runner(object):
 
         return command
 
+
     # }}}
     # }}}
 
@@ -3715,8 +3727,8 @@ class basic_runner(object):
             try:
                 MXG = eval(self._inputFileOpts.root["mxg"])
             except KeyError:
-                message = ("Could not find 'MXG' or 'mxg' " \
-                           "in the input file. " \
+                message = ("Could not find 'MXG' or 'mxg' " 
+                           "in the input file. " 
                            "Setting MXG = 2")
                 warning_printer(message)
                 self._warnings.append(message)
@@ -3727,8 +3739,8 @@ class basic_runner(object):
             try:
                 MYG = eval(self._inputFileOpts.root["myg"])
             except KeyError:
-                message = ("Could not find 'MYG' or 'myg' " \
-                           "in the input file. " \
+                message = ("Could not find 'MYG' or 'myg' " 
+                           "in the input file. " 
                            "Setting MYG = 2")
                 warning_printer(message)
                 self._warnings.append(message)
@@ -3737,6 +3749,7 @@ class basic_runner(object):
             MYG = self._MYG
 
         return MXG, MYG
+
 
     # }}}
 
@@ -3800,10 +3813,10 @@ def _get_start_time():
     # is submitted per second, we add a microsecond in the
     # names for safety
     time_now = datetime.datetime.now()
-    start_time = "{}-{}-{}-{}".format(time_now.hour, \
-                                      time_now.minute, \
-                                      time_now.second, \
-                                      time_now.microsecond, \
+    start_time = "{}-{}-{}-{}".format(time_now.hour,
+                                      time_now.minute,
+                                      time_now.second,
+                                      time_now.microsecond,
                                       )
     return start_time
 
@@ -3827,22 +3840,22 @@ class PBS_runner(basic_runner):
 
     # The constructor
     # {{{__init__
-    def __init__(self, \
-                 BOUT_nodes=1, \
-                 BOUT_ppn=1, \
-                 BOUT_walltime=None, \
-                 BOUT_queue=None, \
-                 BOUT_mail=None, \
-                 BOUT_run_name=None, \
-                 BOUT_account=None, \
-                 post_process_nproc=None, \
-                 post_process_nodes=None, \
-                 post_process_ppn=None, \
-                 post_process_walltime=None, \
-                 post_process_queue=None, \
-                 post_process_mail=None, \
-                 post_process_run_name=None, \
-                 post_process_account=None, \
+    def __init__(self,
+                 BOUT_nodes=1,
+                 BOUT_ppn=1,
+                 BOUT_walltime=None,
+                 BOUT_queue=None,
+                 BOUT_mail=None,
+                 BOUT_run_name=None,
+                 BOUT_account=None,
+                 post_process_nproc=None,
+                 post_process_nodes=None,
+                 post_process_ppn=None,
+                 post_process_walltime=None,
+                 post_process_queue=None,
+                 post_process_mail=None,
+                 post_process_run_name=None,
+                 post_process_account=None,
                  **kwargs):
         # {{{docstring
         """
@@ -3955,12 +3968,12 @@ class PBS_runner(basic_runner):
         # BOUT_ppn and BOUT_nodes are set by default, however, we must check
         # that the user has not given them as wrong input
         if type(self._BOUT_ppn) != int:
-            message = ("BOUT_ppn is of wrong type\n" \
+            message = ("BOUT_ppn is of wrong type\n" 
                        "BOUT_ppn must be given as a int")
             self._errors.append("TypeError")
             raise TypeError(message)
         if type(self._BOUT_nodes) != int:
-            message = ("BOUT_nodes is of wrong type\n" \
+            message = ("BOUT_nodes is of wrong type\n" 
                        "BOUT_nodes must be given as a int")
             self._errors.append("TypeError")
             raise TypeError(message)
@@ -3974,10 +3987,10 @@ class PBS_runner(basic_runner):
         # }}}
 
         # {{{Check all the proper post_process data is set if any is set
-        check_if_set = ( \
-            self._post_process_nproc, \
-            self._post_process_nodes, \
-            self._post_process_ppn, \
+        check_if_set = (
+            self._post_process_nproc,
+            self._post_process_nodes,
+            self._post_process_ppn,
             )
         # All elements of check_if_set must be set if any is set
         not_None = 0
@@ -3986,20 +3999,20 @@ class PBS_runner(basic_runner):
                 not_None += 1
 
         if (not_None != 0) and (not_None != len(check_if_set)):
-            message = ("If any of post_process_nproc, post_process_nodes," \
-                       " post_process_ppn and post_process_walltime is" \
+            message = ("If any of post_process_nproc, post_process_nodes," 
+                       " post_process_ppn and post_process_walltime is" 
                        " set, all others must be set as well.")
             self._errors.append("TypeError")
             raise TypeError(message)
         # }}}
 
         # {{{Check if post_process_ppn and post_process_nodes is int if set
-        check_if_int = ( \
-            (self._post_process_nodes, "post_process_nodes"), \
-            (self._post_process_ppn, "post_process_ppn") \
+        check_if_int = (
+            (self._post_process_nodes, "post_process_nodes"),
+            (self._post_process_ppn, "post_process_ppn")
             )
-        self._check_for_correct_type(var=check_if_int, \
-                                     the_type=int, \
+        self._check_for_correct_type(var=check_if_int,
+                                     the_type=int,
                                      allow_iterable=False)
         # }}}
 
@@ -4007,27 +4020,27 @@ class PBS_runner(basic_runner):
         if self._post_process_nproc is not None:
             if self._post_process_nproc > \
                     (self._post_process_nodes * self._post_process_ppn):
-                message = ("Must have post_process_nproc <= " \
+                message = ("Must have post_process_nproc <= " 
                            "post_process_nodes * post_process_ppn")
                 self._errors.append("TypeError")
                 raise TypeError(message)
         # }}}
 
         # {{{Check if walltime, mail and queue is a string if set
-        check_if_str = ( \
-            (self._BOUT_walltime, "BOUT_walltime"), \
-            (self._BOUT_mail, "BOUT_mail"), \
-            (self._BOUT_queue, "BOUT_queue"), \
-            (self._BOUT_run_name, "BOUT_run_name"), \
-            (self._BOUT_account, "BOUT_account"), \
-            (self._post_process_walltime, "BOUT_walltime"), \
-            (self._post_process_mail, "post_process_mail"), \
-            (self._post_process_queue, "post_process_queue"), \
-            (self._post_process_run_name, "post_process_run_name"), \
-            (self._post_process_account, "post_process_account"), \
+        check_if_str = (
+            (self._BOUT_walltime, "BOUT_walltime"),
+            (self._BOUT_mail, "BOUT_mail"),
+            (self._BOUT_queue, "BOUT_queue"),
+            (self._BOUT_run_name, "BOUT_run_name"),
+            (self._BOUT_account, "BOUT_account"),
+            (self._post_process_walltime, "BOUT_walltime"),
+            (self._post_process_mail, "post_process_mail"),
+            (self._post_process_queue, "post_process_queue"),
+            (self._post_process_run_name, "post_process_run_name"),
+            (self._post_process_account, "post_process_account"),
             )
-        self._check_for_correct_type(var=check_if_str, \
-                                     the_type=str, \
+        self._check_for_correct_type(var=check_if_str,
+                                     the_type=str,
                                      allow_iterable=False)
         # }}}
 
@@ -4036,10 +4049,10 @@ class PBS_runner(basic_runner):
         walltimes = []
         # Append the walltimes if set
         if self._BOUT_walltime is not None:
-            walltimes.append((self._BOUT_walltime, \
+            walltimes.append((self._BOUT_walltime,
                               "BOUT_walltime"))
         if self._post_process_walltime is not None:
-            walltimes.append((self._post_process_walltime, \
+            walltimes.append((self._post_process_walltime,
                               "post_process_walltime"))
 
         # Loop over the walltimes
@@ -4099,19 +4112,19 @@ class PBS_runner(basic_runner):
     # {{{Functions called by _error_check_for_run_input
     # {{{_check_for_child_class_errors
     def _check_for_child_class_errors(
-            self, \
-            remove_old, \
-            post_processing_function, \
-            post_process_after_every_run \
+            self,
+            remove_old,
+            post_processing_function,
+            post_process_after_every_run
             ):
         """Function which check for errors in a child class."""
 
         # Check member data is set if post_processing_function is not None
         if post_processing_function is not None:
-            check_if_set = ( \
-                self._post_process_nproc, \
-                self._post_process_nodes, \
-                self._post_process_ppn, \
+            check_if_set = (
+                self._post_process_nproc,
+                self._post_process_nodes,
+                self._post_process_ppn,
                 )
             # All elements of check_if_set must be set if any is set
             not_None = 0
@@ -4120,8 +4133,8 @@ class PBS_runner(basic_runner):
                     not_None += 1
 
             if (not_None != 0) and (not_None != len(check_if_set)):
-                message = ("post_process_nproc, post_process_nodes," \
-                           " and post_process_ppn and must" \
+                message = ("post_process_nproc, post_process_nodes," 
+                           " and post_process_ppn and must" 
                            " be set if post_processing_function is set.")
                 self._errors.append("TypeError")
                 raise TypeError(message)
@@ -4145,8 +4158,8 @@ class PBS_runner(basic_runner):
 
         # Get the script (as a string) which is going to be
         # submitted
-        job_string = self._get_job_string(run_no, \
-                                          combination, \
+        job_string = self._get_job_string(run_no,
+                                          combination,
                                           append_to_run_log)
 
         # The submission
@@ -4156,11 +4169,11 @@ class PBS_runner(basic_runner):
     # }}}
 
     # {{{_call_post_processing_function
-    def _call_post_processing_function( \
-            self, \
-            function=None, \
-            folders=None, \
-            **kwargs \
+    def _call_post_processing_function(
+            self,
+            function=None,
+            folders=None,
+            **kwargs
             ):
         """
         Function which submits the post processing to the PBS
@@ -4220,14 +4233,14 @@ class PBS_runner(basic_runner):
             job_name = self._post_process_run_name
 
         # Get core of the job string
-        job_string = self._create_PBS_core_string( \
-            job_name=job_name, \
-            nodes=self._post_process_nodes, \
-            ppn=self._post_process_ppn, \
-            walltime=self._post_process_walltime, \
-            mail=self._post_process_mail, \
-            queue=self._post_process_queue, \
-            account=self._post_process_account, \
+        job_string = self._create_PBS_core_string(
+            job_name=job_name,
+            nodes=self._post_process_nodes,
+            ppn=self._post_process_ppn,
+            walltime=self._post_process_walltime,
+            mail=self._post_process_mail,
+            queue=self._post_process_queue,
+            account=self._post_process_account,
             )
         # Call the python script in the submission
 
@@ -4237,7 +4250,7 @@ class PBS_runner(basic_runner):
         # Create the dependencies
         dependencies = ":".join(self._PBS_id)
         # Submit the job
-        print("\nSubmitting the post processing function '{}'\n". \
+        print("\nSubmitting the post processing function '{}'\n".
               format(function.__name__))
         self._submit_to_PBS(job_string, dependent_job=dependencies)
         # }}}
@@ -4257,7 +4270,7 @@ class PBS_runner(basic_runner):
         # Split the name to a list
         combination_name = combination.split(" ")
         # Remove whitespace
-        combination_name = tuple(element for element in combination_name \
+        combination_name = tuple(element for element in combination_name
                                  if element != "")
         # Collect the elements
         combination_name = "_".join(combination_name)
@@ -4282,14 +4295,14 @@ class PBS_runner(basic_runner):
         # }}}
 
         # {{{ Creating the core job string
-        job_string = self._create_PBS_core_string( \
-            job_name=job_name, \
-            nodes=self._BOUT_nodes, \
-            ppn=self._BOUT_ppn, \
-            walltime=self._BOUT_walltime, \
-            mail=self._BOUT_mail, \
-            queue=self._BOUT_queue, \
-            account=self._BOUT_account, \
+        job_string = self._create_PBS_core_string(
+            job_name=job_name,
+            nodes=self._BOUT_nodes,
+            ppn=self._BOUT_ppn,
+            walltime=self._BOUT_walltime,
+            mail=self._BOUT_mail,
+            queue=self._BOUT_queue,
+            account=self._BOUT_account,
             )
         # }}}
 
@@ -4297,7 +4310,7 @@ class PBS_runner(basic_runner):
             # {{{ Get the time for start of the submission
             start = datetime.datetime.now()
             start_time = "{}-{}-{}-{}:{}:{}". \
-                format(start.year, start.month, start.day, \
+                format(start.year, start.month, start.day,
                        start.hour, start.minute, start.second)
             # }}}
 
@@ -4350,15 +4363,15 @@ class PBS_runner(basic_runner):
 
     # {{{Functions called by several functions
     # {{{_create_PBS_core_string
-    def _create_PBS_core_string( \
-            self, \
-            job_name=None, \
-            nodes=None, \
-            ppn=None, \
-            walltime=None, \
-            mail=None, \
-            queue=None, \
-            account=None, \
+    def _create_PBS_core_string(
+            self,
+            job_name=None,
+            nodes=None,
+            ppn=None,
+            walltime=None,
+            mail=None,
+            queue=None,
+            account=None,
             ):
         """
         Creates the core of a PBS script as a string
@@ -4432,9 +4445,9 @@ class PBS_runner(basic_runner):
         # Check for success
         if status != 0:
             if status == 208:
-                message = ("Runs finished before submission of the post" \
-                           " processing function. When the runs are done:" \
-                           " Run again with 'remove_old = False' to submit" \
+                message = ("Runs finished before submission of the post" 
+                           " processing function. When the runs are done:" 
+                           " Run again with 'remove_old = False' to submit" 
                            " the function.")
                 self._warnings.append(message)
             else:
@@ -4464,7 +4477,7 @@ class PBS_runner(basic_runner):
 
 # {{{if __name__ == "__main__":
 if __name__ == "__main__":
-    print(("\n\nTo find out about the bout_runners, please read the user's " \
-           "manual, or have a look at 'BOUT/examples/bout_runners_example', " \
+    print(("\n\nTo find out about the bout_runners, please read the user's " 
+           "manual, or have a look at 'BOUT/examples/bout_runners_example', " 
            "or have a look at the documentation"))
 # }}}
