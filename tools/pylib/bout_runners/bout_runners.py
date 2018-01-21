@@ -554,7 +554,7 @@ class basic_runner(object):
             function must accept the string of self._dmp_folder if
             post_process_after_each_run is True, and a tuple of dmp
             folders if post_process_after_each_run is False
-        post_process_after_each_run : bool, default: True
+        post_process_after_every_run : bool, default: True
             Boolean telling whether post_processing_function should be
             called after each run (if True), or after the number of runs
             decided by self._sort_by (see the constructor of
