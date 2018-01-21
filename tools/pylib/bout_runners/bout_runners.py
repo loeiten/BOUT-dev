@@ -28,9 +28,6 @@ __authors__ = "Michael Loeiten"
 __version__ = "1.071"
 __date__ = "2017.04.18"
 
-
-# FIXME: the .read() functions may have been cast to lower case
-
 # NOTE: Improvement suggestions:
 #       It would be beneficial to refactor bout_runners
 #       1. Better design: Shorter functions
@@ -87,8 +84,8 @@ def get_directory_name(combination):
             ("mesh:", "jyseps1_2"),
             ("mesh:", "jyseps2_1"),
             ("mesh:", "jyseps2_2"),
-            ("", "mxg"),
-            ("", "myg"),
+            ("", "MXG"),
+            ("", "MYG"),
         )
         for mesh_type in mesh_types:
             grid_variable = f.read(mesh_type[1])
@@ -2372,8 +2369,8 @@ class basic_runner(object):
 
             with DataFile(file_name) as f:
                 # Loop over the variables in the file
-                nype = f.read("nype")
-                nxpe = f.read("nxpe")
+                nype = f.read("NYPE")
+                nxpe = f.read("NXPE")
                 for var in f.list():
                     # Read the data
                     data = f.read(var)
