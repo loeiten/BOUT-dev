@@ -38,7 +38,250 @@ from boutdata.restart import redistribute, addnoise, resizeZ, resize
 
 #{{{class basic_runner
 # As a child class uses the super function, the class must allow an
-# object as input
+# object as input:
+def get_folder_name(combination):
+    """
+    Returning the folder name where the data will be stored.
+
+    If all options are given the folder structure should be on the
+    form solver/method/nout_timestep/mesh/additional/grid
+    """
+
+    # Combination is one of the combination of the data members
+    # which is used as the command line arguments in the run
+    combination = combination.split()
+
+    #{{{Append from eventual grid file
+    # FIXME: The grid-file names can become long if adding these,
+    #        consider using just path name to gridfile
+    # If there is a grid file, we will extract the values from the
+    # file, and put it into this local combination variable, so that
+    # a proper dmp folder can be made on basis on the variables
+    # A flag to see whether or not the grid file was found
+    grid_file_found = False
+    # Check if grid is in element, and extract its path
+    for elem in combination:
+        if elem[0:5] == "grid=":
+            cur_grid = elem.replace("grid=","")
+            grid_file_found = True
+
+    # If the grid file is found, open it
+    if grid_file_found:
+        # Open (and automatically close) the grid files
+        f = DataFile(cur_grid)
+        # Search for mesh types in the grid file
+        mesh_types = (\
+                      ("mesh:", "nx"       ) ,\
+                      ("mesh:", "ny"       ) ,\
+                      ("mesh:", "nz"       ) ,\
+                      ("mesh:", "zperiod"  ) ,\
+                      ("mesh:", "zmin"     ) ,\
+                      ("mesh:", "zmax"     ) ,\
+                      ("mesh:", "dx"       ) ,\
+                      ("mesh:", "dy"       ) ,\
+                      ("mesh:", "dz"       ) ,\
+                      ("mesh:", "ixseps1"  ) ,\
+                      ("mesh:", "ixseps2"  ) ,\
+                      ("mesh:", "jyseps1_1") ,\
+                      ("mesh:", "jyseps1_2") ,\
+                      ("mesh:", "jyseps2_1") ,\
+                      ("mesh:", "jyseps2_2") ,\
+                      ("",      "MXG")       ,\
+                      ("",      "MYG")       ,\
+                      )
+        for mesh_type in mesh_types:
+            grid_variable = f.read(mesh_type[1])
+            # If the variable is found
+            if grid_variable is not None:
+                if len(grid_variable.shape) > 0:
+                    # Chosing the first
+                    grid_variable =\
+                            "{:.2e}".format(grid_variable.flatten()[0])
+                # Append it to the combinations list
+                combination.append("{}{}={}".format(mesh_type[0],\
+                                                    mesh_type[1],\
+                                                    grid_variable))
+    #}}}
+
+    # Make lists for the folder-type, so that we can append the
+    # elements in the combination folders if it is found
+    solver        = []
+    method        = []
+    nout_timestep = []
+    mesh          = []
+    additional    = []
+    grid_file     = []
+
+    # We will loop over the names describing the methods used
+    # Possible directional derivatives
+    dir_derivatives = ("ddx", "ddy", "ddz")
+
+    # Check trough all the elements of combination
+    for elem in combination:
+
+        # If "solver" is in the element
+        if "solver" in elem:
+            # Remove 'solver:' and append it to the mesh folder
+            cur_solver = elem.replace("solver:","")
+            cur_solver = cur_solver.replace("=","_")
+            # Append it to the solver folder
+            solver.append(cur_solver)
+
+        # If nout or timestep is in the element
+        elif ("nout" in elem) or\
+             ("timestep" in elem):
+            # Remove "=", and append it to the
+            # nout_timestep folder
+            nout_timestep.append(elem.replace("=","_"))
+
+        # If any quantity related to mesh is in the combination
+        elif ("mesh" in elem) or\
+             ("MXG" in elem) or\
+             ("MYG" in elem) or\
+             ("NXPE" in elem) or\
+             ("NYPE" in elem) or\
+             ("zperiod" in elem) or\
+             ("zmin" in elem) or\
+             ("zmax" in elem) or\
+             (("dx" in elem) and not("ddx" in elem)) or\
+             (("dy" in elem) and not("ddy" in elem)) or\
+             (("dz" in elem) and not("ddz" in elem)):
+            # Remove "mesh:", and append it to the mesh folder
+            cur_mesh = elem.replace("mesh:","")
+            cur_mesh = cur_mesh.replace("=","_")
+            # Simplify the mesh spacing
+            if ("dx" in elem) or ("dy" in elem) or ("dz" in elem):
+                cur_mesh=cur_mesh.split("_")
+                cur_mesh="{}_{:.2e}".format(cur_mesh[0],float(cur_mesh[1]))
+            mesh.append(cur_mesh)
+
+        # If a grid file is in the combination
+        elif (elem[0:4] == "grid"):
+            # Remove .grd .nc and =
+            cur_grid = elem.replace(".grd","")
+            cur_grid = cur_grid.replace(".nc","")
+            cur_grid = cur_grid.replace("=","_")
+            grid_file.append(cur_grid)
+
+        # If the element is none of the above
+        else:
+            # It could either be a dir derivative
+            # Set a flag to state if any of the dir derivative was
+            # found in the combination
+            dir_derivative_set = False
+            # If any of the methods are in combination
+            for dir_derivative in dir_derivatives:
+                if dir_derivative in elem:
+                    # Remove ":", and append it to the
+                    # method folder
+                    cur_method = elem.replace(":","_")
+                    cur_method = cur_method.replace("=","_")
+                    method.append(cur_method)
+                    dir_derivative_set = True
+
+            # If the dir_derivative_set was not set, the only
+            # possibility left is that the element is an
+            # "additional" option
+            if not(dir_derivative_set):
+                # Replace ":" and "=" and append it to the
+                # additional folder
+                cur_additional = elem.replace(":","_")
+                cur_additional = cur_additional.replace("=","_")
+                cur_additional = cur_additional.replace('"',"-")
+                cur_additional = cur_additional.replace("'","-")
+                cur_additional = cur_additional.replace("(",",")
+                cur_additional = cur_additional.replace(")",",")
+                additional.append(cur_additional)
+
+    # We sort the elements in the various folders alphabetically,
+    # to ensure that the naming convention is always the same, no
+    # matter how the full combination string looks like
+    # Sort alphabetically
+    solver.sort()
+    #{{{ Manual sort solver
+    # We want "type" to be first, and "atol" and "rtol" to be last
+    sort_these = (\
+                  ("type",0) ,\
+                  ("atol",-1),\
+                  ("rtol",-1) \
+                 )
+    # Loop through everything we want to sort
+    for sort_this in sort_these:
+        # Flag to check if found
+        found_string = False
+        for elem_nr, elem in enumerate(solver):
+            if sort_this[0] in elem:
+                swap_nr = elem_nr
+                # Set the flag that the string is found
+                found_string = True
+        # If type was found
+        if found_string:
+            # Swap the elements in the solver
+            solver[sort_this[1]], solver[swap_nr] =\
+                    solver[swap_nr], solver[sort_this[1]]
+    #}}}
+    method.sort()
+    nout_timestep.sort()
+    mesh.sort()
+    additional.sort()
+    grid_file.sort()
+
+    # Combine the elements in the various folders
+    solver        = ("_".join(solver),)
+    method        = ("_".join(method),)
+    nout_timestep = ("_".join(nout_timestep),)
+    mesh          = ("_".join(mesh),)
+    additional    = ("_".join(additional),)
+    grid_file     = ("_".join(grid_file),)
+
+    # Put all the folders into the combination_folder
+    combination_folder = (\
+                          solver       ,\
+                          method       ,\
+                          nout_timestep,\
+                          mesh         ,\
+                          additional   ,\
+                          grid_file     \
+                         )
+    # We access the zeroth element (if given) as the folders are
+    # given as a sequence
+    combination_folder = tuple(folder[0] for folder in combination_folder\
+                               if (len(folder) != 0) and not("" in folder))
+
+    # Make the combination folder as a string
+    combination_folder = "/".join(combination_folder)
+
+    return combination_folder
+
+
+def create_folder(folder):
+    """Creates a folder if it doesn't exists"""
+
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+        print(folder + " created\n")
+
+
+def message_chunker(message, chunk=76):
+    """Generator used to chop a message so it doesn't exceed some
+    width"""
+
+    for start in range(0, len(message), chunk):
+        yield message[start:start + chunk]
+
+
+def warning_printer(message):
+    """Function for printing warnings"""
+
+    print("{}{}WARNING{}".format("\n"*3, "*"*37, "*"*36))
+    # Makes sure that no more than 80 characters are printed out at
+    # the same time
+    for chunk in message_chunker(message):
+        rigth_padding = " "*(76 - len(chunk))
+        print("* {}{} *".format(chunk, rigth_padding))
+    print("*"*80 + "\n"*3)
+
+
 class basic_runner(object):
 #{{{docstring
     """
@@ -500,6 +743,9 @@ class basic_runner(object):
         # Initialize outputs from execute runs
         self._PBS_id      = []
         self._dmp_folders = []
+
+        # Place holder
+        self._len_group = None
 #}}}
 
 #{{{__del__
@@ -719,7 +965,8 @@ class basic_runner(object):
 
 #{{{ Functions called by the constructor
 #{{{_set_member_data
-    def _set_member_data(self, input_parameter):
+    @staticmethod
+    def _set_member_data(input_parameter):
         """
         Returns the input_parameter as a tuple if it is different than None,
         and if it is not iterable
@@ -781,7 +1028,7 @@ class basic_runner(object):
                 message = ("More than one *.o file found. "\
                            "The first *.o file is chosen. "\
                            "Consider setting 'prog_name'.")
-                self._warning_printer(message)
+                warning_printer(message)
                 self._warnings.append(message)
                 self._program_name = o_files[0].replace(".o", "")
             elif len(o_files) == 1:
@@ -1178,7 +1425,7 @@ class basic_runner(object):
             # Throw warning if restart is None
             if self._restart is None:
                 message = "restart_from will be ignored as restart = None"
-                self._warning_printer(message)
+                warning_printer(message)
                 self._warnings.append(message)
 
             if type(self._restart_from) != str\
@@ -1194,7 +1441,7 @@ class basic_runner(object):
             # Throw warning if restart is None
             if self._restart is None:
                 message = "redistribute will be ignored as restart = None"
-                self._warning_printer(message)
+                warning_printer(message)
                 self._warnings.append(message)
             # Throw a warning if restart is append
             elif self._restart == "append":
@@ -1203,7 +1450,7 @@ class basic_runner(object):
                            " 'overwrite'")
                 if not(self._restart_from):
                     message += " (previous files will be saved)"
-                self._warning_printer(message)
+                warning_printer(message)
                 self._warnings.append(message)
                 self._restart = "overwrite"
             if type(self._redistribute) != int:
@@ -1238,7 +1485,7 @@ class basic_runner(object):
             # Throw warning if restart is None
             if self._restart is None:
                 message = "add_noise will be ignored as restart = None"
-                self._warning_printer(message)
+                warning_printer(message)
                 self._warnings.append(message)
 
             raise_error = False
@@ -2044,14 +2291,14 @@ class basic_runner(object):
         do_run = True
 
         #{{{ Obtain folder name and copy the input file
-        folder_name = self._get_folder_name(combination)
+        folder_name = get_folder_name(combination)
         self._dmp_folder = os.path.join(self._directory, folder_name)
         # If the last character is "/", then remove it
         if self._dmp_folder[-1] == "/":
             self._dmp_folder = self._dmp_folder[:-1]
 
         # Create folder if it doesn't exists
-        self._create_folder(self._dmp_folder)
+        create_folder(self._dmp_folder)
 
         if type(self._dmp_folders) != tuple:
             # If self._dmp_folders is a tuple, it means that execute runs
@@ -2102,7 +2349,7 @@ class basic_runner(object):
                        ", but no restart files found."\
                        " Setting 'restart' to None").format(self._restart)
             self._restart = None
-            self._warning_printer(message)
+            warning_printer(message)
             self._warnings.append(message)
         #}}}
 
@@ -2129,7 +2376,7 @@ class basic_runner(object):
                                           )
                     if not do_run:
                         message = "Redistribute failed, run skipped"
-                        self._warning_printer(message)
+                        warning_printer(message)
                         self._warnings.append(message)
             else:
                 # Copy the files to restart
@@ -2290,7 +2537,7 @@ class basic_runner(object):
                                                    "BOUT.restart.0.*"))[0]
                 path, name = os.path.split(file_name)
                 before_resize_dir = os.path.join(path, "beforeResizingOneFile")
-                self._create_folder(before_resize_dir)
+                create_folder(before_resize_dir)
                 shutil.move(file_name, before_resize_dir)
 
                 if self._use_expand:
@@ -2327,14 +2574,14 @@ class basic_runner(object):
                         shutil.rmtree(os.path.split(dst)[0])
                     message = "Resize failed, skipping run."
                     self._warnings.append(message)
-                    self._warning_printer(message)
+                    warning_printer(message)
 
                 # Move the resized restart file
                 path, name = os.path.split(file_name)
                 # Create a temporary file which "redistribute" can read
                 # from
                 after_resize_dir = os.path.join(path, "afterResizingOneFile")
-                self._create_folder(after_resize_dir)
+                create_folder(after_resize_dir)
                 shutil.move(file_name, after_resize_dir)
 
                 # Redistribute to original split
@@ -2400,7 +2647,7 @@ class basic_runner(object):
             elif resized:
                 # Copy the files to afterResizeRedistr
                 after_resize_dir = os.path.join(path, "afterResizeRedistr")
-                self._create_folder(after_resize_dir)
+                create_folder(after_resize_dir)
                 file_names = glob.glob(\
                         os.path.join(self._dmp_folder, "BOUT.restart.*"))
                 for file_name in file_names:
@@ -2470,7 +2717,7 @@ class basic_runner(object):
                             shutil.rmtree(os.path.split(location)[0])
                         message = "resizeZ failed, skipping run."
                         self._warnings.append(message)
-                        self._warning_printer(message)
+                        warning_printer(message)
         #}}}
 
         #{{{ Add noise
@@ -2566,7 +2813,7 @@ class basic_runner(object):
                            " when {}"\
                            " was set. Run skipped.").\
                           format(self._dmp_folder, restart_file_search_reason)
-                self._warning_printer(message)
+                warning_printer(message)
                 self._warnings.append(message)
                 return False
             else:
@@ -2747,15 +2994,15 @@ class basic_runner(object):
 
 #{{{ Functions called by _get_correct_domain_split
     #{{{_check_cur_split_found
-    def _check_cur_split_found(self            ,\
-                               cur_split_found ,\
-                               produce_warning ,\
-                               add_number      ,\
-                               size_nr         ,\
-                               local_nx        ,\
-                               local_ny        ,\
-                               using_nx = None ,\
-                               using_ny = None ):
+    @staticmethod
+    def _check_cur_split_found(cur_split_found, \
+                               produce_warning, \
+                               add_number, \
+                               size_nr, \
+                               local_nx, \
+                               local_ny, \
+                               using_nx = None, \
+                               using_ny = None):
         #{{{docstring
         """
         Checks if the current split is found.
@@ -2913,7 +3160,7 @@ class basic_runner(object):
         #{{{ Make the warning if produced
         if produce_warning:
             message = "The mesh was changed to allow the split given by nproc"
-            self._warning_printer(message)
+            warning_printer(message)
             self._warnings.append(message)
         #}}}
     #}}}
@@ -3039,230 +3286,6 @@ class basic_runner(object):
 #}}}
 
 #{{{Function called by _prepare_dmp_folder
-#{{{_get_folder_name
-    def _get_folder_name(self, combination):
-        """
-        Returning the folder name where the data will be stored.
-
-        If all options are given the folder structure should be on the
-        form solver/method/nout_timestep/mesh/additional/grid
-        """
-
-        # Combination is one of the combination of the data members
-        # which is used as the command line arguments in the run
-        combination = combination.split()
-
-        #{{{Append from eventual grid file
-        # FIXME: The grid-file names can become long if adding these,
-        #        consider using just path name to gridfile
-        # If there is a grid file, we will extract the values from the
-        # file, and put it into this local combination variable, so that
-        # a proper dmp folder can be made on basis on the variables
-        # A flag to see whether or not the grid file was found
-        grid_file_found = False
-        # Check if grid is in element, and extract its path
-        for elem in combination:
-            if elem[0:5] == "grid=":
-                cur_grid = elem.replace("grid=","")
-                grid_file_found = True
-
-        # If the grid file is found, open it
-        if grid_file_found:
-            # Open (and automatically close) the grid files
-            f = DataFile(cur_grid)
-            # Search for mesh types in the grid file
-            mesh_types = (\
-                          ("mesh:", "nx"       ) ,\
-                          ("mesh:", "ny"       ) ,\
-                          ("mesh:", "nz"       ) ,\
-                          ("mesh:", "zperiod"  ) ,\
-                          ("mesh:", "zmin"     ) ,\
-                          ("mesh:", "zmax"     ) ,\
-                          ("mesh:", "dx"       ) ,\
-                          ("mesh:", "dy"       ) ,\
-                          ("mesh:", "dz"       ) ,\
-                          ("mesh:", "ixseps1"  ) ,\
-                          ("mesh:", "ixseps2"  ) ,\
-                          ("mesh:", "jyseps1_1") ,\
-                          ("mesh:", "jyseps1_2") ,\
-                          ("mesh:", "jyseps2_1") ,\
-                          ("mesh:", "jyseps2_2") ,\
-                          ("",      "MXG")       ,\
-                          ("",      "MYG")       ,\
-                          )
-            for mesh_type in mesh_types:
-                grid_variable = f.read(mesh_type[1])
-                # If the variable is found
-                if grid_variable is not None:
-                    if len(grid_variable.shape) > 0:
-                        # Chosing the first
-                        grid_variable =\
-                                "{:.2e}".format(grid_variable.flatten()[0])
-                    # Append it to the combinations list
-                    combination.append("{}{}={}".format(mesh_type[0],\
-                                                        mesh_type[1],\
-                                                        grid_variable))
-        #}}}
-
-        # Make lists for the folder-type, so that we can append the
-        # elements in the combination folders if it is found
-        solver        = []
-        method        = []
-        nout_timestep = []
-        mesh          = []
-        additional    = []
-        grid_file     = []
-
-        # We will loop over the names describing the methods used
-        # Possible directional derivatives
-        dir_derivatives = ("ddx", "ddy", "ddz")
-
-        # Check trough all the elements of combination
-        for elem in combination:
-
-            # If "solver" is in the element
-            if "solver" in elem:
-                # Remove 'solver:' and append it to the mesh folder
-                cur_solver = elem.replace("solver:","")
-                cur_solver = cur_solver.replace("=","_")
-                # Append it to the solver folder
-                solver.append(cur_solver)
-
-            # If nout or timestep is in the element
-            elif ("nout" in elem) or\
-                 ("timestep" in elem):
-                # Remove "=", and append it to the
-                # nout_timestep folder
-                nout_timestep.append(elem.replace("=","_"))
-
-            # If any quantity related to mesh is in the combination
-            elif ("mesh" in elem) or\
-                 ("MXG" in elem) or\
-                 ("MYG" in elem) or\
-                 ("NXPE" in elem) or\
-                 ("NYPE" in elem) or\
-                 ("zperiod" in elem) or\
-                 ("zmin" in elem) or\
-                 ("zmax" in elem) or\
-                 (("dx" in elem) and not("ddx" in elem)) or\
-                 (("dy" in elem) and not("ddy" in elem)) or\
-                 (("dz" in elem) and not("ddz" in elem)):
-                # Remove "mesh:", and append it to the mesh folder
-                cur_mesh = elem.replace("mesh:","")
-                cur_mesh = cur_mesh.replace("=","_")
-                # Simplify the mesh spacing
-                if ("dx" in elem) or ("dy" in elem) or ("dz" in elem):
-                    cur_mesh=cur_mesh.split("_")
-                    cur_mesh="{}_{:.2e}".format(cur_mesh[0],float(cur_mesh[1]))
-                mesh.append(cur_mesh)
-
-            # If a grid file is in the combination
-            elif (elem[0:4] == "grid"):
-                # Remove .grd .nc and =
-                cur_grid = elem.replace(".grd","")
-                cur_grid = cur_grid.replace(".nc","")
-                cur_grid = cur_grid.replace("=","_")
-                grid_file.append(cur_grid)
-
-            # If the element is none of the above
-            else:
-                # It could either be a dir derivative
-                # Set a flag to state if any of the dir derivative was
-                # found in the combination
-                dir_derivative_set = False
-                # If any of the methods are in combination
-                for dir_derivative in dir_derivatives:
-                    if dir_derivative in elem:
-                        # Remove ":", and append it to the
-                        # method folder
-                        cur_method = elem.replace(":","_")
-                        cur_method = cur_method.replace("=","_")
-                        method.append(cur_method)
-                        dir_derivative_set = True
-
-                # If the dir_derivative_set was not set, the only
-                # possibility left is that the element is an
-                # "additional" option
-                if not(dir_derivative_set):
-                    # Replace ":" and "=" and append it to the
-                    # additional folder
-                    cur_additional = elem.replace(":","_")
-                    cur_additional = cur_additional.replace("=","_")
-                    cur_additional = cur_additional.replace('"',"-")
-                    cur_additional = cur_additional.replace("'","-")
-                    cur_additional = cur_additional.replace("(",",")
-                    cur_additional = cur_additional.replace(")",",")
-                    additional.append(cur_additional)
-
-        # We sort the elements in the various folders alphabetically,
-        # to ensure that the naming convention is always the same, no
-        # matter how the full combination string looks like
-        # Sort alphabetically
-        solver.sort()
-        #{{{ Manual sort solver
-        # We want "type" to be first, and "atol" and "rtol" to be last
-        sort_these = (\
-                      ("type",0) ,\
-                      ("atol",-1),\
-                      ("rtol",-1) \
-                     )
-        # Loop through everything we want to sort
-        for sort_this in sort_these:
-            # Flag to check if found
-            found_string = False
-            for elem_nr, elem in enumerate(solver):
-                if sort_this[0] in elem:
-                    swap_nr = elem_nr
-                    # Set the flag that the string is found
-                    found_string = True
-            # If type was found
-            if found_string:
-                # Swap the elements in the solver
-                solver[sort_this[1]], solver[swap_nr] =\
-                        solver[swap_nr], solver[sort_this[1]]
-        #}}}
-        method.sort()
-        nout_timestep.sort()
-        mesh.sort()
-        additional.sort()
-        grid_file.sort()
-
-        # Combine the elements in the various folders
-        solver        = ("_".join(solver),)
-        method        = ("_".join(method),)
-        nout_timestep = ("_".join(nout_timestep),)
-        mesh          = ("_".join(mesh),)
-        additional    = ("_".join(additional),)
-        grid_file     = ("_".join(grid_file),)
-
-        # Put all the folders into the combination_folder
-        combination_folder = (\
-                              solver       ,\
-                              method       ,\
-                              nout_timestep,\
-                              mesh         ,\
-                              additional   ,\
-                              grid_file     \
-                             )
-        # We access the zeroth element (if given) as the folders are
-        # given as a sequence
-        combination_folder = tuple(folder[0] for folder in combination_folder\
-                                   if (len(folder) != 0) and not("" in folder))
-
-        # Make the combination folder as a string
-        combination_folder = "/".join(combination_folder)
-
-        return combination_folder
-#}}}
-
-#{{{_create_folder
-    def _create_folder(self, folder):
-        """Creates a folder if it doesn't exists"""
-
-        if not os.path.exists(folder):
-            os.makedirs(folder)
-            print(folder + " created\n")
-#}}}
 
 #{{{_copy_run_files
     def _copy_run_files(self):
@@ -3356,7 +3379,7 @@ class basic_runner(object):
             # Set the restart_nr
             restart_nr = 0
         # Create the folder for the previous runs
-        self._create_folder(os.path.join(\
+        create_folder(os.path.join(\
                                 self._dmp_folder,\
                                 "{}_{}".format(folder_name, restart_nr)))
 
@@ -3484,7 +3507,8 @@ class basic_runner(object):
 
 #{{{Function called by _get_possibilities
 #{{{_generate_possibilities
-    def _generate_possibilities(self, variables=None, section=None, name=None):
+    @staticmethod
+    def _generate_possibilities(variables=None, section=None, name=None):
         """Generate the list of strings of possibilities"""
 
         if variables is not None:
@@ -3653,7 +3677,7 @@ class basic_runner(object):
                 message = ("Could not find 'MXG' or 'mxg' "\
                            "in the input file. "\
                            "Setting MXG = 2")
-                self._warning_printer(message)
+                warning_printer(message)
                 self._warnings.append(message)
                 MXG = 2
         else:
@@ -3665,7 +3689,7 @@ class basic_runner(object):
                 message = ("Could not find 'MYG' or 'myg' "\
                            "in the input file. "\
                            "Setting MYG = 2")
-                self._warning_printer(message)
+                warning_printer(message)
                 self._warnings.append(message)
                 MYG = 2
         else:
@@ -3713,31 +3737,33 @@ class basic_runner(object):
         return n_points
 #}}}
 
-    #{{{_warning_printer
-    def _warning_printer(self, message):
-        """Function for printing warnings"""
+    #{{{warning_printer
+#}}}
 
-        print("{}{}WARNING{}".format("\n"*3, "*"*37, "*"*36))
-        # Makes sure that no more than 80 characters are printed out at
-        # the same time
-        for chunk in self._message_chunker(message):
-            rigth_padding = " "*(76 - len(chunk))
-            print("* {}{} *".format(chunk, rigth_padding))
-        print("*"*80 + "\n"*3)
-    #}}}
-
-    #{{{_message_chunker
-    def _message_chunker(self, message, chunk=76):
-        """Generator used to chop a message so it doesn't exceed some
-        width"""
-
-        for start in range(0, len(message), chunk):
-            yield message[start:start + chunk]
-    #}}}
+    #{{{message_chunker
+#}}}
 #}}}
 #}}}
 
 #{{{class PBS_runner
+def _get_start_time():
+    """
+    Returns a string of the current time down to micro precision
+    """
+
+    # The time is going to be appended to the job name and python name
+    # In case the process is really fast, so that more than one job
+    # is submitted per second, we add a microsecond in the
+    # names for safety
+    time_now = datetime.datetime.now()
+    start_time = "{}-{}-{}-{}".format(time_now.hour,\
+                                      time_now.minute,\
+                                      time_now.second,\
+                                      time_now.microsecond,\
+                                      )
+    return start_time
+
+
 class PBS_runner(basic_runner):
 #{{{docstring
     """
@@ -4095,7 +4121,7 @@ class PBS_runner(basic_runner):
 
         #{{{ Create a python script, calling the post-processing function
         # Get the start_time (to be used in the name of the file)
-        start_time = self._get_start_time()
+        start_time = _get_start_time()
 
         # The name of the file
         python_name = "tmp_{}_{}.py".format(function.__name__, start_time)
@@ -4267,22 +4293,6 @@ class PBS_runner(basic_runner):
 
 #{{{Functions called by _submit_to_PBS
 #{{{_get_start_time
-    def _get_start_time(self):
-        """
-        Returns a string of the current time down to micro precision
-        """
-
-        # The time is going to be appended to the job name and python name
-        # In case the process is really fast, so that more than one job
-        # is submitted per second, we add a microsecond in the
-        # names for safety
-        time_now = datetime.datetime.now()
-        start_time = "{}-{}-{}-{}".format(time_now.hour,\
-                                          time_now.minute,\
-                                          time_now.second,\
-                                          time_now.microsecond,\
-                                          )
-        return start_time
 #}}}
 #}}}
 
@@ -4341,7 +4351,7 @@ class PBS_runner(basic_runner):
 
         # Create the name of the temporary shell script
         # Get the start_time used for the name of the script
-        start_time = self._get_start_time()
+        start_time = _get_start_time()
         script_name = "tmp_{}.sh".format(start_time)
 
         # Save the string as a script
