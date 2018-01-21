@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 """
 Classes for running one or several mpi-runs with BOUT++ at once.
@@ -1157,7 +1158,8 @@ class basic_runner(object):
 
         # }}}
 
-        # {{{Check nx, ny, nz, zperiod, nout, mxstep, separatrix are int/iterable
+        # {{{Check nx, ny, nz, zperiod, nout, mxstep, separatrix are
+        #    int/iterable
         check_if_int = (
             (self._nx, "nx"),
             (self._ny, "ny"),
@@ -1722,7 +1724,7 @@ class basic_runner(object):
         # }}}
 
         # {{{Check grid_file is None if cpy_grid==True
-        if (self._grid_file is None) and (self._cpy_grid == True):
+        if (self._grid_file is None) and (self._cpy_grid is True):
             # Raise error
             self._errors.append("TypeError")
             message = ("Cannot copy the grid files if none exists in "
@@ -1821,7 +1823,7 @@ class basic_runner(object):
         # }}}
 
         # {{{Check if remove_old and restart is set on the same time
-        if remove_old == True and self._restart is not None:
+        if remove_old is True and self._restart is not None:
             self._errors.append("RuntimeError")
             raise RuntimeError("You should not remove old data if you"
                                " want a restart run")
@@ -1838,16 +1840,16 @@ class basic_runner(object):
 
         # {{{Check that the post_process_after_every_run is not set alone
         if (post_process_after_every_run is not None) and \
-            (type(post_processing_function) is None):
+                (type(post_processing_function) is None):
             self._errors.append("RuntimeError")
             message = ("post_process_after_every_run can only be set if"
                        " post_processing_function is given")
             raise RuntimeError(message)
         # }}}
 
-       # {{{Check that the post_process_after_every_run is a boolean
+        # {{{Check that the post_process_after_every_run is a boolean
         if (post_process_after_every_run is not None) and \
-            (type(post_process_after_every_run) != bool):
+                (type(post_process_after_every_run) != bool):
             self._errors.append("RuntimeError")
             message = ("post_process_after_every_run must be set to"
                        " a boolean when set")
@@ -1860,6 +1862,7 @@ class basic_runner(object):
             post_processing_function,
             post_process_after_every_run
         )
+
     # }}}
 
     # {{{_create_run_log
@@ -1879,8 +1882,6 @@ class basic_runner(object):
 
         # Preparation of the run
         print("\nRunning with inputs from '{}'".format(self._directory))
-
-
     # }}}
 
     # {{{_get_correct_domain_split
@@ -2002,8 +2003,6 @@ class basic_runner(object):
                                      local_ny,
                                      type_str="NYPE")
             # }}}
-
-
     # }}}
 
     # {{{_get_possibilities
@@ -2043,8 +2042,9 @@ class basic_runner(object):
                     # the variable
                     for elem in spatial_grid_str[key][0]:
                         spatial_grid_str[key][2].append(
-                            "{}{}={}".
-                                format(spatial_grid_str[key][1], key, elem))
+                            "{}{}={}".format(spatial_grid_str[key][1],
+                                             key,
+                                             elem))
 
             # The goal is to combine the these strings to one string
             # Find the largest length
@@ -2200,7 +2200,7 @@ class basic_runner(object):
                     (additional[2],
                      additional[0],
                      additional[1])
-                    )
+                )
         # }}}
 
         # {{{List of the possibilities of the variables
@@ -2218,8 +2218,6 @@ class basic_runner(object):
 
         # Return the list_of possibilities
         return list_of_possibilities
-
-
     # }}}
 
     # {{{_get_combinations
@@ -2261,16 +2259,12 @@ class basic_runner(object):
             all_combinations_as_strings.append(" ".join(a_tuple))
 
         return all_combinations_as_strings
-
-
     # }}}
 
     # {{{_print_run_or_submit
     def _print_run_or_submit(self):
         """Prints "Now running" """
         print("\nNow running:")
-
-
     # }}}
 
     # {{{_prepare_dmp_folder
@@ -2362,8 +2356,8 @@ class basic_runner(object):
         if len(dmp_files) == 0 and \
                 self._restart is not None and \
                 self._cur_restart_from is None:
-            message = ("'restart' was set to {}" 
-                       ", but no restart files found." 
+            message = ("'restart' was set to {}"
+                       ", but no restart files found."
                        " Setting 'restart' to None").format(self._restart)
             self._restart = None
             warning_printer(message)
@@ -2415,7 +2409,7 @@ class basic_runner(object):
         # {{{ Save files if restart is set to "overwrite"
         # NOTE: This is already done if self._redistribute is set
         if self._restart == "overwrite" and not (self._redistribute) and do_run:
-            self._move_old_runs(folder_name="restart",  include_restart=False)
+            self._move_old_runs(folder_name="restart", include_restart=False)
         # }}}
 
         # {{{Finding cur_nz
@@ -2517,13 +2511,16 @@ class basic_runner(object):
                         else:
                             call_resize = True
                             if self._restart == "append":
-                                message = ("Cannot change nx, ny and/or nz " 
+                                message = ("Cannot change nx, ny and/or nz "
                                            "when appending\n")
                                 # Extra plane in nz
                                 message += (
-                                    "Requested nx = {}, nx in restart file = {}\n" 
-                                    "Requested ny = {}, ny in restart file = {}\n" 
-                                    "Requested nz = {}, nz in restart file = {}\n" 
+                                    "Requested nx = {}, "
+                                    "nx in restart file = {}\n"
+                                    "Requested ny = {}, "
+                                    "ny in restart file = {}\n"
+                                    "Requested nz = {}, "
+                                    "nz in restart file = {}\n"
                                     "Resizing:\n"). \
                                     format(cur_nx, nx, cur_ny, ny, cur_nz, nz)
                                 raise IOError(message)
@@ -2544,7 +2541,7 @@ class basic_runner(object):
                                        myg=MYG,
                                        )
                 if not success:
-                    message = ("Failed to redistribute to one file when " 
+                    message = ("Failed to redistribute to one file when "
                                "resizing evolved variables")
                     raise RuntimeError(message)
 
@@ -2614,7 +2611,7 @@ class basic_runner(object):
                                        )
 
                 if not success:
-                    message = ("Failed to redistribute after " 
+                    message = ("Failed to redistribute after "
                                "resizing evolved variables")
                     if self._cur_restart_from:
                         print("Something went wrong: Reomving {}\n".
@@ -2651,8 +2648,8 @@ class basic_runner(object):
                             _nx, _ny, nz = data.shape
 
                             if nz != cur_nz:
-                                message = ("Cannot change nz when appending\n" 
-                                           "nz in restart file = {}\n" 
+                                message = ("Cannot change nz when appending\n"
+                                           "nz in restart file = {}\n"
                                            "current run nz = {}"). \
                                     format(nz, cur_nz)
                                 raise IOError(message)
@@ -2710,11 +2707,11 @@ class basic_runner(object):
                                     if self._cur_restart_from:
                                         print(("Something went wrong: "
                                                "Reomving {}\n").
-                                            format(
-                                            os.path.split(location)[0]))
+                                              format(os.path.split(location)[0])
+                                              )
                                         shutil.rmtree(
                                             os.path.split(location)[0])
-                                    message = ("Cannot decrease nz from {} to" 
+                                    message = ("Cannot decrease nz from {} to"
                                                " {} in a restart"). \
                                         format(nz, cur_nz)
                                     raise IOError(message)
@@ -2769,8 +2766,6 @@ class basic_runner(object):
         # }}}
 
         return do_run
-
-
     # }}}
 
     # {{{_remove_data
@@ -2801,8 +2796,6 @@ class basic_runner(object):
         folder_to_rm = tuple(f for f in folder_to_rm if os.path.isdir(f))
         for f in folder_to_rm:
             shutil.rmtree(f)
-
-
     # }}}
 
     # {{{_check_if_run_already_performed
@@ -2830,8 +2823,8 @@ class basic_runner(object):
                 glob.glob(os.path.join(self._dmp_folder, "*.restart.*"))
             # Check if dmp or restart files are found
             if len(dmp_files) != 0 or len(restart_files) != 0:
-                message = ("Restart or dmp files was found in {}" 
-                           " when {}" 
+                message = ("Restart or dmp files was found in {}"
+                           " when {}"
                            " was set. Run skipped."). \
                     format(self._dmp_folder, restart_file_search_reason)
                 warning_printer(message)
@@ -2843,13 +2836,11 @@ class basic_runner(object):
         elif len(dmp_files) != 0 and self._restart is None:
             print("Skipping the run as *.dmp.* files was found in "
                   + self._dmp_folder)
-            print(("To overwrite old files, run with" 
+            print(("To overwrite old files, run with"
                    " self.execute_runs(remove_old=True)\n"))
             return False
         else:
             return True
-
-
     # }}}
 
     # {{{_call_post_processing_function
@@ -2860,8 +2851,6 @@ class basic_runner(object):
         """Function which calls the post_processing_function"""
 
         function(folders, **kwargs)
-
-
     # }}}
     # }}}
 
@@ -2872,15 +2861,13 @@ class basic_runner(object):
             remove_old,
             post_processing_function,
             post_process_after_every_run
-            ):
+    ):
         """
         Function which check for errors in a child class.
 
         Here a virtual function
         """
         pass
-
-
     # }}}
     # }}}
 
@@ -2900,8 +2887,6 @@ class basic_runner(object):
         if status != 0:
             self._errors.append("RuntimeError")
             raise RuntimeError("Error encountered during make.")
-
-
     # }}}
     # }}}
 
@@ -2947,17 +2932,15 @@ class basic_runner(object):
                         # Neither correct type, nor iterable
                         success = False
                 if not (success):
-                    message = ("{} is of wrong type\n" 
+                    message = ("{} is of wrong type\n"
                                "{} must be {}"). \
                         format(cur_var[1], the_type.__name__)
                     if allow_iterable:
                         # If iterable is allowed, then add this
-                        message += (" or an iterable with {}" 
+                        message += (" or an iterable with {}"
                                     " as elements.").format(the_type.__name__)
                     self._errors.append("TypeError")
                     raise TypeError(message)
-
-
     # }}}
 
     # {{{_check_if_set_correctly
@@ -2985,13 +2968,11 @@ class basic_runner(object):
                 success = False
 
         if not (success):
-            message = ("{} was not set to a possible option.\n" 
+            message = ("{} was not set to a possible option.\n"
                        "The possibilities are \n{}"). \
                 format(var[1], "\n".join(possibilities))
             self._errors.append("TypeError")
             raise TypeError(message)
-
-
     # }}}
 
     # {{{_check_if_same_len
@@ -3016,12 +2997,10 @@ class basic_runner(object):
             len_dim2 = 1
 
         if len_dim1 != len_dim2:
-            message = ("{} and {} must have the same" 
+            message = ("{} and {} must have the same"
                        " length when specified").format(object1[1], object2[1])
             self._errors.append("RuntimeError")
             raise RuntimeError(message)
-
-
     # }}}
     # }}}
 
@@ -3074,7 +3053,7 @@ class basic_runner(object):
         produce_warning : bool
             Whether or not a warning should be produced
         """
-       # }}}
+        # }}}
 
         # If the value tried is not a good value
         if not cur_split_found:
@@ -3100,16 +3079,13 @@ class basic_runner(object):
             #        nx-2   ny
             #        nx     ny-2
             #        ...
-            add_number = (-1) ** (abs(add_number)) \
-                         * (abs(add_number) + 1)
+            add_number = (-1) ** (abs(add_number)) * (abs(add_number) + 1)
         else:
             # If no warnings has been produced so far
             if not (produce_warning):
                 produce_warning = False
 
         return local_nx, local_ny, add_number, produce_warning
-
-
     # }}}
 
     # {{{_check_init_split_found
@@ -3156,8 +3132,8 @@ class basic_runner(object):
                 # If the split fails and the a grid file is given
                 if self._grid_file is not None:
                     self._errors.append("RuntimeError")
-                    message = ("The grid can not be split using the" 
-                               " current number of nproc.\n" 
+                    message = ("The grid can not be split using the"
+                               " current number of nproc.\n"
                                "Suggest using ")
                     if test_nx:
                         message += "nx = {} ".format(self._nx[size_nr])
@@ -3168,11 +3144,11 @@ class basic_runner(object):
                 # If the split fails and no grid file is given
                 else:
                     self._errors.append("RuntimeError")
-                    message = ("The grid can not be split using the" 
-                               " current number of nproc.\n" 
-                               "Setting allow_size_modification = True" 
-                               " will allow modification of the grid" 
-                               " so that it can be split with the" 
+                    message = ("The grid can not be split using the"
+                               " current number of nproc.\n"
+                               "Setting allow_size_modification = True"
+                               " will allow modification of the grid"
+                               " so that it can be split with the"
                                " current number of nproc")
                     raise RuntimeError(message)
             else:
@@ -3198,8 +3174,6 @@ class basic_runner(object):
             warning_printer(message)
             self._warnings.append(message)
         # }}}
-
-
     # }}}
 
     # {{{_check_NXPE_or_NYPE
@@ -3319,8 +3293,6 @@ class basic_runner(object):
                                              test_nx=False,
                                              test_ny=True,
                                              produce_warning=produce_warning)
-
-
     # }}}
     # }}}
 
@@ -3389,8 +3361,6 @@ class basic_runner(object):
                         shutil.copy2(cur_file, self._dmp_folder)
 
         return do_run
-
-
     # }}}
 
     # {{{_move_old_runs
@@ -3460,8 +3430,6 @@ class basic_runner(object):
                 shutil.copy2(cur_file, dst)
 
         return dst
-
-
     # }}}
     # }}}
 
@@ -3489,7 +3457,7 @@ class basic_runner(object):
             print("{0}{1}{2}{1}{0}{3}".
                   format("\n", "!" * len(message), message, out))
             self._errors.append("RuntimeError")
-            message = ("An error occurred the run." 
+            message = ("An error occurred the run."
                        " Please see the output above for details.")
             # Search if parantheses are present, but without ' or "
             if ("(" in combination and
@@ -3499,17 +3467,17 @@ class basic_runner(object):
                         not (re.search(r'\)(.*)\"', combination)
                              or re.search(r"\)(.*)\'", combination))):
                 message = (
-                    "A '(' and/or ')' symbol seem to have appeared in the" 
-                    " command line.\nIf this true, you can avoid" 
-                    " this problem by adding an extra set of" 
-                    " quotation marks. For example\n\n" 
-                    "additional=('variable', 'bndry_xin'," 
-                    " '\"dirichlet_o4(0.0)\")'\n" 
-                    "rather than\n" 
-                    "additional=('variable', 'bndry_xin'," 
+                    "A '(' and/or ')' symbol seem to have appeared in the"
+                    " command line.\nIf this true, you can avoid"
+                    " this problem by adding an extra set of"
+                    " quotation marks. For example\n\n"
+                    "additional=('variable', 'bndry_xin',"
+                    " '\"dirichlet_o4(0.0)\")'\n"
+                    "rather than\n"
+                    "additional=('variable', 'bndry_xin',"
                     " 'dirichlet_o4(0.0))'")
             else:
-                message = ("An error occurred the run." 
+                message = ("An error occurred the run."
                            " Please see the output above for details.")
             raise RuntimeError(message)
 
@@ -3518,8 +3486,6 @@ class basic_runner(object):
         elapsed_time = toc - tic
 
         return out, elapsed_time
-
-
     # }}}
 
     # {{{_append_run_log
@@ -3547,8 +3513,6 @@ class basic_runner(object):
         log_format = "{:<19}   {:^9}   {:^6}   {:<17}   {:<}"
         with open(self._run_log, "a") as f:
             f.write(log_format.format(*line) + "\n")
-
-
     # }}}
     # }}}
 
@@ -3574,8 +3538,6 @@ class basic_runner(object):
             var_possibilities = []
 
         return var_possibilities
-
-
     # }}}
     # }}}
 
@@ -3686,8 +3648,6 @@ class basic_runner(object):
             self._len_group *= elem
 
         return input_list
-
-
     # }}}
     # }}}
 
@@ -3713,8 +3673,6 @@ class basic_runner(object):
         command = "./{} {}".format(self._program_name, arg)
 
         return command
-
-
     # }}}
     # }}}
 
@@ -3727,8 +3685,8 @@ class basic_runner(object):
             try:
                 MXG = eval(self._inputFileOpts.root["mxg"])
             except KeyError:
-                message = ("Could not find 'MXG' or 'mxg' " 
-                           "in the input file. " 
+                message = ("Could not find 'MXG' or 'mxg' "
+                           "in the input file. "
                            "Setting MXG = 2")
                 warning_printer(message)
                 self._warnings.append(message)
@@ -3739,8 +3697,8 @@ class basic_runner(object):
             try:
                 MYG = eval(self._inputFileOpts.root["myg"])
             except KeyError:
-                message = ("Could not find 'MYG' or 'myg' " 
-                           "in the input file. " 
+                message = ("Could not find 'MYG' or 'myg' "
+                           "in the input file. "
                            "Setting MYG = 2")
                 warning_printer(message)
                 self._warnings.append(message)
@@ -3749,8 +3707,6 @@ class basic_runner(object):
             MYG = self._MYG
 
         return MXG, MYG
-
-
     # }}}
 
     # {{{_get_dim_from_input
@@ -3968,12 +3924,12 @@ class PBS_runner(basic_runner):
         # BOUT_ppn and BOUT_nodes are set by default, however, we must check
         # that the user has not given them as wrong input
         if type(self._BOUT_ppn) != int:
-            message = ("BOUT_ppn is of wrong type\n" 
+            message = ("BOUT_ppn is of wrong type\n"
                        "BOUT_ppn must be given as a int")
             self._errors.append("TypeError")
             raise TypeError(message)
         if type(self._BOUT_nodes) != int:
-            message = ("BOUT_nodes is of wrong type\n" 
+            message = ("BOUT_nodes is of wrong type\n"
                        "BOUT_nodes must be given as a int")
             self._errors.append("TypeError")
             raise TypeError(message)
@@ -3991,7 +3947,7 @@ class PBS_runner(basic_runner):
             self._post_process_nproc,
             self._post_process_nodes,
             self._post_process_ppn,
-            )
+        )
         # All elements of check_if_set must be set if any is set
         not_None = 0
         for check in check_if_set:
@@ -3999,8 +3955,8 @@ class PBS_runner(basic_runner):
                 not_None += 1
 
         if (not_None != 0) and (not_None != len(check_if_set)):
-            message = ("If any of post_process_nproc, post_process_nodes," 
-                       " post_process_ppn and post_process_walltime is" 
+            message = ("If any of post_process_nproc, post_process_nodes,"
+                       " post_process_ppn and post_process_walltime is"
                        " set, all others must be set as well.")
             self._errors.append("TypeError")
             raise TypeError(message)
@@ -4010,7 +3966,7 @@ class PBS_runner(basic_runner):
         check_if_int = (
             (self._post_process_nodes, "post_process_nodes"),
             (self._post_process_ppn, "post_process_ppn")
-            )
+        )
         self._check_for_correct_type(var=check_if_int,
                                      the_type=int,
                                      allow_iterable=False)
@@ -4020,7 +3976,7 @@ class PBS_runner(basic_runner):
         if self._post_process_nproc is not None:
             if self._post_process_nproc > \
                     (self._post_process_nodes * self._post_process_ppn):
-                message = ("Must have post_process_nproc <= " 
+                message = ("Must have post_process_nproc <= "
                            "post_process_nodes * post_process_ppn")
                 self._errors.append("TypeError")
                 raise TypeError(message)
@@ -4038,7 +3994,7 @@ class PBS_runner(basic_runner):
             (self._post_process_queue, "post_process_queue"),
             (self._post_process_run_name, "post_process_run_name"),
             (self._post_process_account, "post_process_account"),
-            )
+        )
         self._check_for_correct_type(var=check_if_str,
                                      the_type=str,
                                      allow_iterable=False)
@@ -4116,7 +4072,7 @@ class PBS_runner(basic_runner):
             remove_old,
             post_processing_function,
             post_process_after_every_run
-            ):
+    ):
         """Function which check for errors in a child class."""
 
         # Check member data is set if post_processing_function is not None
@@ -4125,7 +4081,7 @@ class PBS_runner(basic_runner):
                 self._post_process_nproc,
                 self._post_process_nodes,
                 self._post_process_ppn,
-                )
+            )
             # All elements of check_if_set must be set if any is set
             not_None = 0
             for check in check_if_set:
@@ -4133,8 +4089,8 @@ class PBS_runner(basic_runner):
                     not_None += 1
 
             if (not_None != 0) and (not_None != len(check_if_set)):
-                message = ("post_process_nproc, post_process_nodes," 
-                           " and post_process_ppn and must" 
+                message = ("post_process_nproc, post_process_nodes,"
+                           " and post_process_ppn and must"
                            " be set if post_processing_function is set.")
                 self._errors.append("TypeError")
                 raise TypeError(message)
@@ -4174,7 +4130,7 @@ class PBS_runner(basic_runner):
             function=None,
             folders=None,
             **kwargs
-            ):
+    ):
         """
         Function which submits the post processing to the PBS
 
@@ -4241,7 +4197,7 @@ class PBS_runner(basic_runner):
             mail=self._post_process_mail,
             queue=self._post_process_queue,
             account=self._post_process_account,
-            )
+        )
         # Call the python script in the submission
 
         job_string += "python {}\n".format(python_name)
@@ -4303,7 +4259,7 @@ class PBS_runner(basic_runner):
             mail=self._BOUT_mail,
             queue=self._BOUT_queue,
             account=self._BOUT_account,
-            )
+        )
         # }}}
 
         if append_to_run_log:
@@ -4372,7 +4328,7 @@ class PBS_runner(basic_runner):
             mail=None,
             queue=None,
             account=None,
-            ):
+    ):
         """
         Creates the core of a PBS script as a string
         """
@@ -4445,9 +4401,9 @@ class PBS_runner(basic_runner):
         # Check for success
         if status != 0:
             if status == 208:
-                message = ("Runs finished before submission of the post" 
-                           " processing function. When the runs are done:" 
-                           " Run again with 'remove_old = False' to submit" 
+                message = ("Runs finished before submission of the post"
+                           " processing function. When the runs are done:"
+                           " Run again with 'remove_old = False' to submit"
                            " the function.")
                 self._warnings.append(message)
             else:
@@ -4477,7 +4433,7 @@ class PBS_runner(basic_runner):
 
 # {{{if __name__ == "__main__":
 if __name__ == "__main__":
-    print(("\n\nTo find out about the bout_runners, please read the user's " 
-           "manual, or have a look at 'BOUT/examples/bout_runners_example', " 
+    print(("\n\nTo find out about the bout_runners, please read the user's "
+           "manual, or have a look at 'BOUT/examples/bout_runners_example', "
            "or have a look at the documentation"))
 # }}}
