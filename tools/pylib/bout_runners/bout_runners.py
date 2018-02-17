@@ -51,7 +51,7 @@ def get_directory_name(combination):
 
     # Append from eventual grid file
     # FIXME: The grid-file names can become long if adding these,
-    #        consider using just path name to gridfile
+    #        consider using just path name to grid file
     # If there is a grid file, we will extract the values from the
     # file, and put it into this local combination variable, so that
     # a proper dmp directory can be made on basis on the variables
@@ -92,7 +92,7 @@ def get_directory_name(combination):
             # If the variable is found
             if grid_variable is not None:
                 if len(grid_variable.shape) > 0:
-                    # Chosing the first
+                    # Choosing the first
                     grid_variable = \
                         "{:.2e}".format(grid_variable.flatten()[0])
                 # Append it to the combinations list
@@ -101,7 +101,7 @@ def get_directory_name(combination):
                                                     grid_variable))
 
     # Make lists for the directory-type, so that we can append the
-    # elements in the combination directorys if it is found
+    # elements in the combination directories if it is found
     solver = []
     method = []
     nout_timestep = []
@@ -190,7 +190,7 @@ def get_directory_name(combination):
                 cur_additional = cur_additional.replace(")", ",")
                 additional.append(cur_additional)
 
-    # We sort the elements in the various directorys alphabetically,
+    # We sort the elements in the various directories alphabetically,
     # to ensure that the naming convention is always the same, no
     # matter how the full combination string looks like
     # Sort alphabetically
@@ -223,7 +223,7 @@ def get_directory_name(combination):
     additional.sort()
     grid_file.sort()
 
-    # Combine the elements in the various directorys
+    # Combine the elements in the various directories
     solver = ("_".join(solver),)
     method = ("_".join(method),)
     nout_timestep = ("_".join(nout_timestep),)
@@ -231,7 +231,7 @@ def get_directory_name(combination):
     additional = ("_".join(additional),)
     grid_file = ("_".join(grid_file),)
 
-    # Put all the directorys into the combination_directory
+    # Put all the directories into the combination_directory
     combination_directory = (
         solver,
         method,
@@ -240,7 +240,7 @@ def get_directory_name(combination):
         additional,
         grid_file
     )
-    # We access the zeroth element (if given) as the directorys are
+    # We access the zeroth element (if given) as the directories are
     # given as a sequence
     combination_directory = \
         tuple(directory[0] for directory in combination_directory
@@ -275,11 +275,12 @@ def warning_printer(message):
     # Makes sure that no more than 80 characters are printed out at
     # the same time
     for chunk in message_chunker(message):
-        rigth_padding = " " * (76 - len(chunk))
-        print("* {}{} *".format(chunk, rigth_padding))
+        right_padding = " " * (76 - len(chunk))
+        print("* {}{} *".format(chunk, right_padding))
     print("*" * 80 + "\n" * 3)
 
 
+# noinspection SpellCheckingInspection,SpellCheckingInspection,SpellCheckingInspection,SpellCheckingInspection
 class basic_runner(object):
     """
     basic_runner
@@ -307,7 +308,7 @@ class basic_runner(object):
     self._allow_size_modification = False
 
     self._program_name is by default set to the same name as any .o files in
-    thedirectory where an instance of the object is created. If none is found the
+    the directory where an instance of the object is created. If none is found the
     constructor tries to run make.
 
     All other data members are set to None by default.
@@ -315,7 +316,7 @@ class basic_runner(object):
     The data members will override the corresponding options given in
     self._directory/BOUT.inp.
 
-    See the doctring of the constructor (__int__) for options.
+    See the docstring of the constructor (__int__) for options.
     See BOUT/examples/bout_runners_example for examples.
     """
 
@@ -395,7 +396,7 @@ class basic_runner(object):
         directory : str
             The directory of the BOUT.inp file
         prog_name : str or iterable
-            Name of the excecutable. If none is set the name will be set from
+            Name of the executable. If none is set the name will be set from
             the *.o file.
         solver : str or iterable
             The solver to be used in the runs
@@ -446,10 +447,10 @@ class basic_runner(object):
         jyseps2_2 : int or iterable
             Branch cut location 2_2 (see user's manual for details)
         sym_glob_x : bool
-            Whether or not to use symmetricGLobalX (x defined
+            Whether or not to use symmetricGlobalX (x defined
             symmetrically between 0 and 1)
         sym_glob_y : bool
-            Whether or not to use symmetricGLobalY (y defined
+            Whether or not to use symmetricGlobalY (y defined
             symmetrically)
         ddx_first : str or iterable
             Method used for for first ddx terms
@@ -490,7 +491,7 @@ class basic_runner(object):
             The same as above, with the exception that no combination
             will be performed between the elements during a run
         restart : str
-            Wheter or not to use the restart files. Must be either
+            Whether or not to use the restart files. Must be either
             "overwrite" or "append" if set
         restart_from : [str | function]
             Path to restart if string. If function: A function which
@@ -512,7 +513,7 @@ class basic_runner(object):
             Only used when restarting.
             Max processors used when calling boutdata.restart.resize
         intrp_method: str
-            Only used when restarting, and when the mesh is resizied.
+            Only used when restarting, and when the mesh is resized.
             Sets the method used in the interpolation.
         add_noise : dict
             Adding noise to the restart files by calling the addnoise
@@ -528,7 +529,7 @@ class basic_runner(object):
             >>> add_noise = {"n":1e-4, "Te":1e-5}
 
         cpy_source : bool
-            Wheter or not to copy the source files to the directory of the
+            Whether or not to copy the source files to the directory of the
             *.dmp.* files
         cpy_grid : bool
             Whether or not to copy the grid files to the directory of the
@@ -735,7 +736,7 @@ class basic_runner(object):
 
         # Initialize outputs from execute runs
         self._pbs_id = []
-        self._dmp_directorys = []
+        self._dmp_directories = []
 
         # Place holder
         self._len_group = None
@@ -743,10 +744,10 @@ class basic_runner(object):
     def __del__(self):
         """The destructor will print all the warning and error messages"""
 
-        # Switch to see if error occured
-        error_occured = False
+        # Switch to see if error occurred
+        error_occurred = False
 
-        # If errors occured
+        # If errors occurred
         if len(self._errors) > 0:
             message = "! A {} occurred. !".format(self._errors[0])
             # Find the boarder length
@@ -754,14 +755,14 @@ class basic_runner(object):
             # Print the message
             print("{0}{1}\n{2}\n{1}{0}".
                   format("\n" * 2, "!" * len_boarder, message))
-            error_occured = True
+            error_occurred = True
         if len(self._warnings) > 0:
             print("{}The following WARNINGS were detected:\n{}".
                   format("\n" * 3, "-" * 80))
             for warning in self._warnings:
                 print(warning + "\n")
             print("{}{}".format("-" * 80, "\n" * 3))
-        elif len(self._warnings) > 0 and not error_occured:
+        elif len(self._warnings) > 0 and not error_occurred:
             print("{} {}".format("\n" * 3, "~" * 69))
             print(("| No WARNINGS detected before instance destruction in "
                    "'bout_runners'. |"))
@@ -787,7 +788,7 @@ class basic_runner(object):
             A function to be called after one or several run. This
             function must accept the string of self._dmp_directory if
             post_process_after_each_run is True, and a tuple of dmp
-            directorys if post_process_after_each_run is False
+            directories if post_process_after_each_run is False
         post_process_after_every_run : bool, default: True
             Boolean telling whether post_processing_function should be
             called after each run (if True), or after the number of runs
@@ -799,7 +800,7 @@ class basic_runner(object):
 
         Returns
         -------
-        self._dmp_directorys : sequence (not str)
+        self._dmp_directories : sequence (not str)
             A sequence of the directory locations made from the runner
         self._pbs_id : sequence (not str)
             A sequence of the PBS ids is returned.
@@ -854,7 +855,7 @@ class basic_runner(object):
         # run, make an appendable list over all the runs which will be
         # passed as an input parameter to the post processing function
         if not post_process_after_every_run:
-            seq_of_dmp_directorys = []
+            seq_of_dmp_directories = []
 
         # Print either "now running" or "now submitting"
         self._print_run_or_submit()
@@ -909,30 +910,30 @@ class basic_runner(object):
                     # Call the post processing function
                     self._call_post_processing_function(
                         function=post_processing_function,
-                        directorys=(self._dmp_directory,),
+                        directories=(self._dmp_directory,),
                         **kwargs)
                 else:
-                    # Append the dmp directory to the list of dmp directorys
-                    seq_of_dmp_directorys.append(self._dmp_directory)
+                    # Append the dmp directory to the list of dmp directories
+                    seq_of_dmp_directories.append(self._dmp_directory)
                     # If the run_no+1 is divisible by self._len_group
                     if (run_no + 1) % self._len_group == 0:
                         # Call the post processing function
                         self._call_post_processing_function(
                             function=post_processing_function,
-                            directorys=tuple(seq_of_dmp_directorys),
+                            directories=tuple(seq_of_dmp_directories),
                             **kwargs)
-                        # Reset the seq_of_dmp_directorys
-                        seq_of_dmp_directorys = []
+                        # Reset the seq_of_dmp_directories
+                        seq_of_dmp_directories = []
 
         # Cast to tuple
         self._pbs_id = tuple(self._pbs_id)
-        if hasattr(self._dmp_directorys, "__iter__") \
-                and type(self._dmp_directorys) != str:
-            self._dmp_directorys = tuple(el for el in self._dmp_directorys)
+        if hasattr(self._dmp_directories, "__iter__") \
+                and type(self._dmp_directories) != str:
+            self._dmp_directories = tuple(el for el in self._dmp_directories)
         else:
-            self._dmp_directorys = (self._dmp_directorys,)
+            self._dmp_directories = (self._dmp_directories,)
 
-        return self._dmp_directorys, self._pbs_id
+        return self._dmp_directories, self._pbs_id
 
     def _run_driver(self, combination, run_no):
         """
@@ -973,7 +974,7 @@ class basic_runner(object):
         Parameters
         ----------
         prog_name : str
-            Name of the exceutable. If None, the name will be set from
+            Name of the executable. If None, the name will be set from
             the *.o file.
         """
 
@@ -1075,7 +1076,7 @@ class basic_runner(object):
             raise RuntimeError("No BOUT.inp files found in '{}'".
                                format(self._directory))
 
-        # Check grid_file are strings, that they exsist, and one can sort
+        # Check grid_file are strings, that they exist, and one can sort
         if self._grid_file is not None:
             # Set a variable which is has length over one if the test fails
             not_found = []
@@ -1329,7 +1330,7 @@ class basic_runner(object):
                 if not (sort_check[1] in possible_sort_by):
                     possible_sort_by.append(sort_check[1])
 
-        # Append the additionals and series_add
+        # Append the additional and series_add
         # If additional is set
         if self._additional is not None:
             for additional in self._additional:
@@ -1495,8 +1496,8 @@ class basic_runner(object):
                 (self._jyseps1_2, "jyseps1_2"),
                 (self._jyseps2_1, "jyseps2_1"),
                 (self._jyseps2_2, "jyseps2_2"),
-                (self._sym_glob_x, "symmmetricGlobalX"),
-                (self._sym_glob_y, "symmmetricGlobalY")
+                (self._sym_glob_x, "symmetricGlobalX"),
+                (self._sym_glob_y, "symmetricGlobalY")
             )
             for var in check_if_in_grid:
                 # If the variable is set
@@ -1583,7 +1584,7 @@ class basic_runner(object):
             raise TypeError(message)
 
         # Check that dz is not set
-        # dz is currently set throught zmin and zmax
+        # dz is currently set through zmin and zmax
         if self._dz is not None:
             self._errors.append("TypeError")
             message = ("dz can currently just be set through zmin and zmax\n"
@@ -1619,18 +1620,18 @@ class basic_runner(object):
         if self._series_add is not None:
             # Make the second indices iterable if they are not already
             # Start by converting to list, so that self._series becomes
-            # modifyable
+            # modifiable
             self._series_add = list(list(el) for el in self._series_add)
             for index in range(len(self._series_add)):
                 if not (hasattr(self._series_add[index][2], "__iter__")):
                     self._series_add[index][2] = (self._series_add[index][2],)
-            # Conver to tuple
+            # Convert to tuple
             self._series_add = tuple(tuple(el) for el in self._series_add)
 
             # Collect all second indices
-            third_indicies = tuple(elems[2] for elems in self._series_add)
+            third_indices = tuple(elems[2] for elems in self._series_add)
             # Find the length of the second indices
-            lengths = tuple(len(elem) for elem in third_indicies
+            lengths = tuple(len(elem) for elem in third_indices
                             if (type(elem) != str and type(elem) != dict))
 
             # Check that the length of the second indices are the same
@@ -1747,7 +1748,7 @@ class basic_runner(object):
             raise RuntimeError("You should not remove old data if you"
                                " want a restart run")
 
-        # Check that the post_processing_function is a fuction
+        # Check that the post_processing_function is a function
         if (post_processing_function is not None) and \
                 (not (hasattr(post_processing_function, "__call__"))):
             self._errors.append("RuntimeError")
@@ -2205,11 +2206,11 @@ class basic_runner(object):
         # Create directory if it doesn't exists
         create_directory(self._dmp_directory)
 
-        if type(self._dmp_directorys) != tuple:
-            # If self._dmp_directorys is a tuple, it means that execute runs
+        if type(self._dmp_directories) != tuple:
+            # If self._dmp_directories is a tuple, it means that execute runs
             # is called more then once.
-            # self._dmp_directorys should then not be appended
-            self._dmp_directorys.append(self._dmp_directory)
+            # self._dmp_directories should then not be appended
+            self._dmp_directories.append(self._dmp_directory)
 
         # If self._dmp_directory contains anything other than
         # self._directory
@@ -2469,7 +2470,7 @@ class basic_runner(object):
                 if not success:
                     do_run = False
                     if self._cur_restart_from:
-                        print("Something went wrong: Reomving {}\n".
+                        print("Something went wrong: Removing {}\n".
                               format(os.path.split(dst)[0], "\n"))
                         shutil.rmtree(os.path.split(dst)[0])
                     message = "Resize failed, skipping run."
@@ -2501,7 +2502,7 @@ class basic_runner(object):
                     message = ("Failed to redistribute after "
                                "resizing evolved variables")
                     if self._cur_restart_from:
-                        print("Something went wrong: Reomving {}\n".
+                        print("Something went wrong: Removing {}\n".
                               format(os.path.split(dst)[0], "\n"))
                         shutil.rmtree(os.path.split(dst)[0])
                     raise RuntimeError(message)
@@ -2593,7 +2594,7 @@ class basic_runner(object):
                                 else:
                                     if self._cur_restart_from:
                                         print(("Something went wrong: "
-                                               "Reomving {}\n").
+                                               "Removing {}\n").
                                               format(os.path.split(location)[0])
                                               )
                                         shutil.rmtree(
@@ -2613,7 +2614,7 @@ class basic_runner(object):
                     if not success:
                         do_run = False
                         if self._cur_restart_from:
-                            print("Something went wrong: Reomving {}\n".
+                            print("Something went wrong: Removing {}\n".
                                   format(os.path.split(location)[0]))
                             shutil.rmtree(os.path.split(location)[0])
                         message = "resizeZ failed, skipping run."
@@ -2675,7 +2676,7 @@ class basic_runner(object):
             os.path.join(self._dmp_directory, "before_redistribution_*"))
         directory_to_rm.extend(glob.glob(os.path.join(self._dmp_directory,
                                                       "run_*")))
-        # Filter to only inlcude directorys
+        # Filter to only include directories
         directory_to_rm = tuple(f for f in directory_to_rm if os.path.isdir(f))
         for f in directory_to_rm:
             shutil.rmtree(f)
@@ -2725,11 +2726,11 @@ class basic_runner(object):
 
     def _call_post_processing_function(self,
                                        func=None,
-                                       directorys=None,
+                                       directories=None,
                                        **kwargs):
         """Function which calls the post_processing_function"""
 
-        func(directorys, **kwargs)
+        func(directories, **kwargs)
 
     def _check_for_child_class_errors(
             self,
@@ -3202,7 +3203,7 @@ class basic_runner(object):
     def _move_old_runs(self, directory_name="restart", include_restart=False):
         """Move old runs, return the destination path"""
 
-        # Check for directorys in the dmp directory
+        # Check for directories in the dmp directory
         directories = tuple(
             name for name in
             os.listdir(self._dmp_directory) if
@@ -3212,7 +3213,7 @@ class basic_runner(object):
                            if directory_name in name)
         # Check that the sequence is not empty
         if len(restart_nr) != 0:
-            # Sort the directorys in ascending order
+            # Sort the directories in ascending order
             restart_nr = list(restart_nr)
             restart_nr.sort()
             # Pick the last index
@@ -3288,7 +3289,7 @@ class basic_runner(object):
             print("{0}{1}{2}{1}{0}{3}".
                   format("\n", "!" * len(message), message, out))
             self._errors.append("RuntimeError")
-            # Search if parantheses are present, but without ' or "
+            # Search if parenthesis are present, but without ' or "
             if ("(" in combination and
                 not (re.search(r'\"(.*)\(', combination)
                      or re.search(r"\'(.*)\(", combination))) \
@@ -3883,7 +3884,7 @@ class PBS_runner(basic_runner):
     def _call_post_processing_function(
             self,
             func=None,
-            directorys=None,
+            directories=None,
             **kwargs
     ):
         """
@@ -3922,12 +3923,12 @@ class PBS_runner(basic_runner):
         # Put a comma in between the arguments
         arguments = ", ".join(arguments)
         # Call the post processing function
-        if hasattr(directorys, "__iter__") and type(directorys) != str:
+        if hasattr(directories, "__iter__") and type(directories) != str:
             python_tmp += "{}({},{})\n". \
-                format(func.__name__, tuple(directorys), arguments)
-        elif type(directorys) == str:
+                format(func.__name__, tuple(directories), arguments)
+        elif type(directories) == str:
             python_tmp += "{}(('{}',),{})\n". \
-                format(func.__name__, directorys, arguments)
+                format(func.__name__, directories, arguments)
         # When the script has run, it will delete itself
         python_tmp += "os.remove('{}')\n".format(python_name)
 
