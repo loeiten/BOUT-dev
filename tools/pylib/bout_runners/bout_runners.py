@@ -280,7 +280,7 @@ def warning_printer(message):
     print("*" * 80 + "\n" * 3)
 
 
-# noinspection SpellCheckingInspection,SpellCheckingInspection,SpellCheckingInspection,SpellCheckingInspection
+# noinspection PyUnusedLocal,PyUnusedLocal
 class basic_runner(object):
     """
     basic_runner
@@ -483,7 +483,7 @@ class basic_runner(object):
         additional : tuple or iterable
             Additional option for the run given on the form
 
-            >>> ("section_name","variable name", values)
+            >>> ("section_name", "variable name", values)
 
             or as iterable on the same form, where values can be any
             value or string or an iterable of those
@@ -499,7 +499,7 @@ class basic_runner(object):
             execute_runs) as input and returns the restart path. The
             function is handy when restarting from jobs while doing a
             parameter scan.
-        redistribute : int
+        redist : [int | None]
             The number of processors the redistribute the restart files
             to. Calls the redistribute function in boutdata.restart.
             Will only be effective if "restart" is not None
